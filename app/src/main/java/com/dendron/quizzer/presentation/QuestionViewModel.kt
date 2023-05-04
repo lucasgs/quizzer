@@ -26,6 +26,9 @@ class QuestionViewModel @Inject constructor(private val questionRepository: Triv
     private val _answer = MutableStateFlow("")
     val answer = _answer.asStateFlow()
 
+    private val _error = MutableStateFlow("")
+    val error = _error.asStateFlow()
+
     init {
         fetchQuestionList()
     }
@@ -42,17 +45,27 @@ class QuestionViewModel @Inject constructor(private val questionRepository: Triv
     private fun updateGameState() {
         val question = game.getCurrentQuestion()
         val answers = (question.incorrectAnswer + question.correctAnswer).shuffled()
-        _state.value = _state.value.copy(
-            progress = "Question ${game.getProgress()}, Score: ${game.getScore()}",
-            question = question.text.parseAsHtml().toString(),
-            answers = answers.map { it.parseAsHtml().toString() }
-        )
+        _state.value =
+            _state.value.copy(
+                progress = "Question ${game.getProgress()}, Score: ${game.getScore()}",
+                question = question.text.parseAsHtml().toString(),
+                answers = answers.map { it.parseAsHtml().toString() },
+            )
     }
 
     fun nextQuestion() {
-        game.checkAnswer(_answer.value)
-        game.nextQuestion()
-        updateGameState()
+        val currentAnswer = _answer.value
+        if (currentAnswer.isEmpty()) {
+            _error.update {
+                "Please, select an answer :)"
+            }
+        } else {
+            _error.update { "" }
+            _answer.update { "" }
+            game.checkAnswer(currentAnswer)
+            game.nextQuestion()
+            updateGameState()
+        }
     }
 
     fun setAnswer(answer: String) {

@@ -116,6 +116,7 @@ fun QuestionBottom(
 fun QuestionScreen(viewModel: QuestionViewModel = hiltViewModel()) {
     val state = viewModel.state.collectAsStateWithLifecycle()
     val answerState = viewModel.answer.collectAsStateWithLifecycle()
+    val errorState = viewModel.error.collectAsStateWithLifecycle()
     val value = state.value
     Box(
         modifier = Modifier
@@ -123,8 +124,6 @@ fun QuestionScreen(viewModel: QuestionViewModel = hiltViewModel()) {
             .padding(30.dp)
     ) {
         Column(
-//            verticalArrangement = Arrangement.Center,
-//            verticalArrangement = Arrangement.SpaceAround,
             modifier = Modifier.fillMaxSize()
         ) {
             HeaderSection(progress = value.progress, text = value.question)
@@ -138,8 +137,10 @@ fun QuestionScreen(viewModel: QuestionViewModel = hiltViewModel()) {
                     answers = value.answers,
                     answerSelected = answerState.value
                 ) { selected ->
-//                    answerSelected = selected
                     viewModel.setAnswer(selected)
+                }
+                if (errorState.value.isNotEmpty()) {
+                    Text(errorState.value, color = Color.Red)
                 }
                 QuestionBottom() {
                     viewModel.nextQuestion()

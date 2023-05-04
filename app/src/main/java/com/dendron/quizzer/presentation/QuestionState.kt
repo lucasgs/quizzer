@@ -5,6 +5,4 @@ data class QuestionState(
     val progress: String = "",
     val selected: String = "",
     val answers: List<String> = emptyList(),
-    val isLoading: Boolean = false,
-    val error: String = ""
 )
