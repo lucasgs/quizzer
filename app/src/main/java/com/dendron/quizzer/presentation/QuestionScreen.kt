@@ -28,7 +28,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.dendron.quizzer.presentation.common.VerticalSpace
 
 @Composable
-fun QuestionHeader(progress: String, text: String) {
+fun HeaderSection(progress: String, text: String) {
     Column(
         verticalArrangement = Arrangement.SpaceAround,
         modifier = Modifier.padding(8.dp)
@@ -101,7 +101,8 @@ fun QuestionBottom(
     onClick: () -> Unit
 ) {
     Row(
-        horizontalArrangement = Arrangement.Center, modifier = modifier.fillMaxWidth()
+        horizontalArrangement = Arrangement.Center,
+        modifier = modifier.fillMaxWidth()
     ) {
         Button(
             onClick = onClick
@@ -114,10 +115,8 @@ fun QuestionBottom(
 @Composable
 fun QuestionScreen(viewModel: QuestionViewModel = hiltViewModel()) {
     val state = viewModel.state.collectAsStateWithLifecycle()
+    val answerState = viewModel.answer.collectAsStateWithLifecycle()
     val value = state.value
-    var answerSelected by remember {
-        mutableStateOf("")
-    }
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -128,7 +127,7 @@ fun QuestionScreen(viewModel: QuestionViewModel = hiltViewModel()) {
 //            verticalArrangement = Arrangement.SpaceAround,
             modifier = Modifier.fillMaxSize()
         ) {
-            QuestionHeader(progress = value.progress, text = value.question)
+            HeaderSection(progress = value.progress, text = value.question)
             Column(
                 verticalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier
@@ -137,12 +136,13 @@ fun QuestionScreen(viewModel: QuestionViewModel = hiltViewModel()) {
             ) {
                 AnswersList(
                     answers = value.answers,
-                    answerSelected = answerSelected
+                    answerSelected = answerState.value
                 ) { selected ->
-                    answerSelected = selected
+//                    answerSelected = selected
+                    viewModel.setAnswer(selected)
                 }
                 QuestionBottom() {
-                    viewModel.nextQuestion(answerSelected)
+                    viewModel.nextQuestion()
                 }
             }
         }

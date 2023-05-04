@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -21,6 +22,9 @@ class QuestionViewModel @Inject constructor(private val questionRepository: Triv
 
     private val _state = MutableStateFlow(QuestionState())
     val state = _state.asStateFlow()
+
+    private val _answer = MutableStateFlow("")
+    val answer = _answer.asStateFlow()
 
     init {
         fetchQuestionList()
@@ -38,16 +42,20 @@ class QuestionViewModel @Inject constructor(private val questionRepository: Triv
     private fun updateGameState() {
         val question = game.getCurrentQuestion()
         val answers = (question.incorrectAnswer + question.correctAnswer).shuffled()
-        _state.value = QuestionState(
-            progress = "Question ${game.getProgress() }, Score: ${game.getScore()}",
+        _state.value = _state.value.copy(
+            progress = "Question ${game.getProgress()}, Score: ${game.getScore()}",
             question = question.text.parseAsHtml().toString(),
             answers = answers.map { it.parseAsHtml().toString() }
         )
     }
 
-    fun nextQuestion(currentAnswer: String) {
-        game.checkAnswer(currentAnswer)
+    fun nextQuestion() {
+        game.checkAnswer(_answer.value)
         game.nextQuestion()
         updateGameState()
+    }
+
+    fun setAnswer(answer: String) {
+        _answer.update { answer }
     }
 }
