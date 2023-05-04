@@ -1,5 +1,6 @@
 package com.dendron.quizzer.presentation
 
+import androidx.core.text.parseAsHtml
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dendron.quizzer.domain.model.Game
@@ -29,10 +30,24 @@ class QuestionViewModel @Inject constructor(private val questionRepository: Triv
         viewModelScope.launch {
             questionRepository.getQuestions().onEach { questionList ->
                 game = Game(questionList)
-                _state.value = QuestionState(
-                    currentQuestion = game.getCurrentQuestion()
-                )
+                updateGameState()
             }.launchIn(viewModelScope)
         }
+    }
+
+    private fun updateGameState() {
+        val question = game.getCurrentQuestion()
+        val answers = (question.incorrectAnswer + question.correctAnswer).shuffled()
+        _state.value = QuestionState(
+            progress = "Question ${game.getProgress() }, Score: ${game.getScore()}",
+            question = question.text.parseAsHtml().toString(),
+            answers = answers.map { it.parseAsHtml().toString() }
+        )
+    }
+
+    fun nextQuestion(currentAnswer: String) {
+        game.checkAnswer(currentAnswer)
+        game.nextQuestion()
+        updateGameState()
     }
 }

@@ -7,16 +7,21 @@ class Game(private val questionList: List<Question>) {
 
     fun getCurrentQuestion() = questionList[questionNumber]
 
-    fun getCurrentQuestion2() = questionList[questionNumber].text
+    private fun getCurrentCorrectAnswer() = questionList[questionNumber].correctAnswer
 
-    fun getCurrentIncorrectAnswer() = questionList[questionNumber].incorrectAnswer
-
-    fun getCurrentCorrectAnswer() = questionList[questionNumber].correctAnswer
-
-    fun getProgress() = (questionNumber + 1) / questionList.size
+//    fun getProgress() = (questionNumber + 1) / questionList.size.toFloat()
+    fun getProgress() = "${questionNumber+1} / ${questionList.size}"
 
     fun getScore() = score
 
+   fun checkAnswer(answer: String): Boolean {
+       return if (getCurrentCorrectAnswer() == answer) {
+           score += 1
+           true
+       } else {
+           false
+       }
+    }
     fun nextQuestion() {
         if (questionNumber + 1 < questionList.size) {
             questionNumber++

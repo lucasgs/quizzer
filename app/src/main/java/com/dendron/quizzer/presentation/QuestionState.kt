@@ -1,9 +1,9 @@
 package com.dendron.quizzer.presentation
 
-import com.dendron.quizzer.domain.model.Question
-
 data class QuestionState(
-    val currentQuestion: Question? = null,
+    val question: String = "",
+    val progress: String = "",
+    val answers: List<String> = emptyList(),
     val isLoading: Boolean = false,
     val error: String = ""
 )
