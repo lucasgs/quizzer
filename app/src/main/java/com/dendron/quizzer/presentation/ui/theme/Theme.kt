@@ -1,4 +1,4 @@
-package com.dendron.quizzer.ui.theme
+package com.dendron.quizzer.presentation.ui.theme
 
 import android.app.Activity
 import android.os.Build

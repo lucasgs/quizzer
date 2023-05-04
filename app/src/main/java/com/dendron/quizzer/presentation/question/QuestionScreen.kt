@@ -1,4 +1,4 @@
-package com.dendron.quizzer.presentation
+package com.dendron.quizzer.presentation.question
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box

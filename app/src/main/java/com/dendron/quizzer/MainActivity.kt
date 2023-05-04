@@ -7,8 +7,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
-import com.dendron.quizzer.presentation.QuestionScreen
-import com.dendron.quizzer.ui.theme.QuizzerTheme
+import com.dendron.quizzer.presentation.question.QuestionScreen
+import com.dendron.quizzer.presentation.ui.theme.QuizzerTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

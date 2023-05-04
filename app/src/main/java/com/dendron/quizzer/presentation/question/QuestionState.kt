@@ -1,4 +1,4 @@
-package com.dendron.quizzer.presentation
+package com.dendron.quizzer.presentation.question
 
 data class QuestionState(
     val question: String = "",

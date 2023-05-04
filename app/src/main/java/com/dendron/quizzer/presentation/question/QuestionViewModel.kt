@@ -1,4 +1,4 @@
-package com.dendron.quizzer.presentation
+package com.dendron.quizzer.presentation.question
 
 import androidx.core.text.parseAsHtml
 import androidx.lifecycle.ViewModel
@@ -43,14 +43,17 @@ class QuestionViewModel @Inject constructor(private val questionRepository: Triv
     }
 
     private fun updateGameState() {
+        val progress = "Question ${game.getProgress()}, Score: ${game.getScore()}"
         val question = game.getCurrentQuestion()
         val answers = (question.incorrectAnswer + question.correctAnswer).shuffled()
-        _state.value =
+            .map { it.parseAsHtml().toString() }
+        _state.update {
             _state.value.copy(
-                progress = "Question ${game.getProgress()}, Score: ${game.getScore()}",
+                progress = progress,
                 question = question.text.parseAsHtml().toString(),
-                answers = answers.map { it.parseAsHtml().toString() },
+                answers = answers,
             )
+        }
     }
 
     fun nextQuestion() {
@@ -60,11 +63,11 @@ class QuestionViewModel @Inject constructor(private val questionRepository: Triv
                 "Please, select an answer :)"
             }
         } else {
-            _error.update { "" }
-            _answer.update { "" }
             game.checkAnswer(currentAnswer)
             game.nextQuestion()
             updateGameState()
+            _error.update { "" }
+            _answer.update { "" }
         }
     }
 
