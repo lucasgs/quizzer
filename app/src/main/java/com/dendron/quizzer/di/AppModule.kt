@@ -35,7 +35,7 @@ class AppModule {
     @Singleton
     fun provideTriviaRepository(
         api: OpenTriviaDbApi
-    ): TriviaRepository{
+    ): TriviaRepository {
         return OpenTriviaDbRepository(api)
     }
 }

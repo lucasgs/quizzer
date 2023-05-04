@@ -5,7 +5,9 @@ class Game(private val questionList: List<Question>) {
     private var questionNumber = 0
     private var score = 0
 
-    fun getCurrentQuestion() = questionList[questionNumber].text
+    fun getCurrentQuestion() = questionList[questionNumber]
+
+    fun getCurrentQuestion2() = questionList[questionNumber].text
 
     fun getCurrentIncorrectAnswer() = questionList[questionNumber].incorrectAnswer
 
