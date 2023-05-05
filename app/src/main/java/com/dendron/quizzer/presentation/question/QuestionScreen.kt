@@ -3,11 +3,9 @@ package com.dendron.quizzer.presentation.question
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -15,6 +13,7 @@ import androidx.navigation.NavHostController
 import com.dendron.quizzer.presentation.components.MainLayout
 import com.dendron.quizzer.presentation.navigation.Screen
 import com.dendron.quizzer.presentation.question.components.AnswersList
+import com.dendron.quizzer.presentation.question.components.ErrorMessage
 import com.dendron.quizzer.presentation.question.components.HeaderSection
 import com.dendron.quizzer.presentation.question.components.QuestionBottom
 
@@ -57,7 +56,7 @@ fun QuestionScreen(
                 viewModel.setAnswer(selected)
             }
             if (errorState.value.isNotEmpty()) {
-                Text(errorState.value, color = Color.Red)
+                ErrorMessage(errorState.value)
             }
         }
     }
