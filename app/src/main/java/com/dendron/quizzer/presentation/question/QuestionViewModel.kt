@@ -1,8 +1,10 @@
 package com.dendron.quizzer.presentation.question
 
+import android.util.Log
 import androidx.core.text.parseAsHtml
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.dendron.quizzer.common.Resource
 import com.dendron.quizzer.domain.model.Game
 import com.dendron.quizzer.domain.model.Status
 import com.dendron.quizzer.domain.repository.TriviaRepository
@@ -50,12 +52,22 @@ class QuestionViewModel @Inject constructor(private val questionRepository: Triv
     }
 
     private fun fetchQuestionList() {
-        _loading.update { true }
         viewModelScope.launch {
-            questionRepository.getQuestions().onEach { questionList ->
-                game.start(questionList)
-                updateGameState()
-                _loading.update { false }
+            questionRepository.getQuestions().onEach { resource ->
+                when (resource) {
+                    is Resource.Error -> {
+                        _loading.update { false }
+                        _error.update { "There was an error loading the questions :(" }
+                        Log.e("Quizzer", "fetchQuestionList: ${resource.message.toString()}")
+                    }
+
+                    is Resource.Loading -> _loading.update { true }
+                    is Resource.Success -> {
+                        game.start(resource.data)
+                        updateGameState()
+                        _loading.update { false }
+                    }
+                }
             }.launchIn(viewModelScope)
         }
     }
