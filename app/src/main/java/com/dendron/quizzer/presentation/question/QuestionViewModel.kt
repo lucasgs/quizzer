@@ -33,8 +33,10 @@ class QuestionViewModel @Inject constructor(private val questionRepository: Triv
     private val _error = MutableStateFlow("")
     val error = _error.asStateFlow()
 
-    private val _gameEnded = MutableStateFlow(false)
+    private val _loading = MutableStateFlow(false)
+    val loading = _loading.asStateFlow()
 
+    private val _gameEnded = MutableStateFlow(false)
     val gameEnded = _state.map {
         game.getStatus() == (Status.ENDED)
     }.stateIn(
@@ -48,10 +50,12 @@ class QuestionViewModel @Inject constructor(private val questionRepository: Triv
     }
 
     private fun fetchQuestionList() {
+        _loading.update { true }
         viewModelScope.launch {
             questionRepository.getQuestions().onEach { questionList ->
                 game.start(questionList)
                 updateGameState()
+                _loading.update { false }
             }.launchIn(viewModelScope)
         }
     }

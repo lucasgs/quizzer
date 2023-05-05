@@ -1,10 +1,13 @@
 package com.dendron.quizzer.presentation.question
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -25,6 +28,7 @@ fun QuestionScreen(
     val state = viewModel.state.collectAsStateWithLifecycle()
     val answerState = viewModel.answer.collectAsStateWithLifecycle()
     val errorState = viewModel.error.collectAsStateWithLifecycle()
+    val loadingState = viewModel.loading.collectAsStateWithLifecycle()
     val gameEnded = viewModel.gameEnded.collectAsStateWithLifecycle()
     val value = state.value
 
@@ -57,6 +61,14 @@ fun QuestionScreen(
             }
             if (errorState.value.isNotEmpty()) {
                 ErrorMessage(errorState.value)
+            }
+            if (loadingState.value) {
+                Box(modifier = Modifier.fillMaxSize()) {
+                    CircularProgressIndicator(
+                        modifier = Modifier
+                            .align(Alignment.Center)
+                    )
+                }
             }
         }
     }
