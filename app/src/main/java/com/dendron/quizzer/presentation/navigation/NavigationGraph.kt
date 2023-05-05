@@ -6,7 +6,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.dendron.quizzer.presentation.home.HomeScreen
 import com.dendron.quizzer.presentation.question.QuestionScreen
-import com.dendron.quizzer.presentation.result.ResultScreen
+import com.dendron.quizzer.presentation.score.ScoreScreen
 
 @Composable
 fun NavigationGraph(navController: NavHostController) {
@@ -23,8 +23,8 @@ fun NavigationGraph(navController: NavHostController) {
             QuestionScreen(navController = navController)
         }
 
-        composable(route = Screen.RESULT.route + "/{score}") { navBackStackEntry ->
-            ResultScreen(
+        composable(route = Screen.SCORE.route + "/{score}") { navBackStackEntry ->
+            ScoreScreen(
                 navController = navController,
                 score = navBackStackEntry.arguments?.getString("score").toString()
             )

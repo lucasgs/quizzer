@@ -33,7 +33,7 @@ fun QuestionScreen(
 
     if (gameEnded.value) {
         LaunchedEffect(gameEnded) {
-            navController.navigate(Screen.RESULT.route + "/${value.score}") {
+            navController.navigate(Screen.SCORE.route + "/${value.score}") {
                 popUpTo(Screen.QUESTION.route) { inclusive = true }
             }
         }

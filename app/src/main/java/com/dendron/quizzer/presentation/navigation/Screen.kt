@@ -6,5 +6,5 @@ enum class Screen(
 ) {
     HOME("home"),
     QUESTION("question"),
-    RESULT("result")
+    SCORE("score")
 }

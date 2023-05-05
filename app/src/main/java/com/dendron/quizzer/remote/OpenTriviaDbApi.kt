@@ -1,5 +1,6 @@
 package com.dendron.quizzer.remote
 
+import com.dendron.quizzer.common.Constants.QUESTION_COUNT
 import com.dendron.quizzer.data.model.Trivia
 import retrofit2.http.GET
 import retrofit2.http.Query
@@ -7,7 +8,7 @@ import retrofit2.http.Query
 interface OpenTriviaDbApi {
     @GET("api.php")
     suspend fun getQuestions(
-        @Query("amount") amount: Int = 10,
+        @Query("amount") amount: Int = QUESTION_COUNT,
         @Query("difficulty") difficulty: String = "",
         @Query("category") category: String = "",
     ): Trivia
