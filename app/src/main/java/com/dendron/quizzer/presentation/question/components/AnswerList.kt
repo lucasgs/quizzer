@@ -19,7 +19,7 @@ fun AnswersList(
         horizontalAlignment = Alignment.Start,
         verticalArrangement = Arrangement.SpaceAround,
         modifier = modifier
-            .padding(top = 8.dp)
+            .padding(8.dp)
     ) {
         answers.forEach { text ->
             AnswerItem(text = text, text == answerSelected) {

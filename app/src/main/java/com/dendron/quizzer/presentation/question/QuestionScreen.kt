@@ -1,9 +1,6 @@
 package com.dendron.quizzer.presentation.question
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
@@ -15,6 +12,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
+import com.dendron.quizzer.presentation.components.MainLayout
 import com.dendron.quizzer.presentation.navigation.Screen
 import com.dendron.quizzer.presentation.question.components.AnswersList
 import com.dendron.quizzer.presentation.question.components.HeaderSection
@@ -39,33 +37,27 @@ fun QuestionScreen(
         }
     }
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(30.dp)
+    MainLayout(
+        bottomBar = {
+            QuestionBottom() {
+                viewModel.nextQuestion()
+            }
+        }
     ) {
         Column(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(30.dp)
         ) {
             HeaderSection(progress = value.progress, text = value.question)
-            Column(
-                verticalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .padding(10.dp)
-            ) {
-                AnswersList(
-                    answers = value.answers,
-                    answerSelected = answerState.value
-                ) { selected ->
-                    viewModel.setAnswer(selected)
-                }
-                if (errorState.value.isNotEmpty()) {
-                    Text(errorState.value, color = Color.Red)
-                }
-                QuestionBottom() {
-                    viewModel.nextQuestion()
-                }
+            AnswersList(
+                answers = value.answers,
+                answerSelected = answerState.value
+            ) { selected ->
+                viewModel.setAnswer(selected)
+            }
+            if (errorState.value.isNotEmpty()) {
+                Text(errorState.value, color = Color.Red)
             }
         }
     }

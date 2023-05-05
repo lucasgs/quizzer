@@ -17,7 +17,8 @@ fun QuestionBottom(
 ) {
     Row(
         horizontalArrangement = Arrangement.Center,
-        modifier = modifier.fillMaxWidth()
+        modifier = modifier
+            .fillMaxWidth()
     ) {
         Button(
             onClick = onClick
