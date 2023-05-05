@@ -1,4 +1,4 @@
-package com.dendron.quizzer.presentation.common
+package com.dendron.quizzer.presentation.components
 
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
