@@ -7,7 +7,7 @@ import retrofit2.http.Query
 interface OpenTriviaDbApi {
     @GET("api.php")
     suspend fun getQuestions(
-        @Query("amount") amount: Int = 1,
+        @Query("amount") amount: Int = 10,
         @Query("difficulty") difficulty: String = "",
         @Query("category") category: String = "",
     ): Trivia
