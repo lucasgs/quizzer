@@ -18,7 +18,7 @@ import com.dendron.quizzer.presentation.navigation.Screen
 import com.dendron.quizzer.presentation.question.components.AnswersList
 import com.dendron.quizzer.presentation.question.components.ErrorMessage
 import com.dendron.quizzer.presentation.question.components.HeaderSection
-import com.dendron.quizzer.presentation.question.components.QuestionBottom
+import com.dendron.quizzer.presentation.question.components.QuestionActions
 
 @Composable
 fun QuestionScreen(
@@ -42,7 +42,7 @@ fun QuestionScreen(
 
     MainLayout(
         bottomBar = {
-            QuestionBottom() {
+            QuestionActions() {
                 viewModel.nextQuestion()
             }
         }

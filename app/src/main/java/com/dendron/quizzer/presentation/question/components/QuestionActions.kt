@@ -11,7 +11,7 @@ import androidx.compose.ui.res.stringResource
 import com.dendron.quizzer.R
 
 @Composable
-fun QuestionBottom(
+fun QuestionActions(
     modifier: Modifier = Modifier,
     onClick: () -> Unit
 ) {

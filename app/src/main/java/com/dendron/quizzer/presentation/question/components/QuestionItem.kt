@@ -14,12 +14,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.dendron.quizzer.presentation.ui.theme.Gray200
+import com.dendron.quizzer.presentation.ui.theme.Green400
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AnswerItem(
     text: String, selected: Boolean, modifier: Modifier = Modifier, onClick: (String) -> Unit
 ) {
+    val containerColor = if (selected) Green400 else Gray200
+    val textColor = if (selected) Color.White else Color.Black
+
     Box(
         modifier = modifier
             .padding(top = 8.dp)
@@ -28,9 +33,9 @@ fun AnswerItem(
             selected = false,
             label = { Text(text) },
             colors = FilterChipDefaults.elevatedFilterChipColors(
-                selectedLabelColor = Color.Green,
-                selectedContainerColor = Color.Green,
-                selectedTrailingIconColor = Color.Green
+                containerColor = containerColor,
+                labelColor = textColor,
+                iconColor = textColor,
             ),
             trailingIcon = if (selected) {
                 {
