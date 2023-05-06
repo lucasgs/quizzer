@@ -121,8 +121,11 @@ class QuestionViewModel @Inject constructor(private val questionRepository: Triv
                     )
                 } else {
                     AnswerResult.Incorrect(
-                        message = "The correct was: '" +
-                                game.getCurrentCorrectAnswer() + "' :("
+                        buildString {
+                            append("The correct was: '")
+                            append(game.getCurrentCorrectAnswer().parseAsHtml().toString())
+                            append("'")
+                        }
                     )
                 }
             }

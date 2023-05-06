@@ -1,5 +1,6 @@
 package com.dendron.quizzer.presentation.question
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -43,26 +44,33 @@ fun QuestionScreen(
         }
     }
 
-    MainLayout(bottomBar = {
-        QuestionActions() {
-            viewModel.nextQuestion()
-        }
-    }) {
+    MainLayout(
+        bottomBar = {
+            QuestionActions() {
+                viewModel.nextQuestion()
+            }
+        }) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(30.dp)
         ) {
-            HeaderSection(
-                text = value.question,
-                questionCount = value.questionCount,
-                questionNumber = value.questionNumber
-            )
-            VerticalSpace()
-            AnswersList(
-                answers = value.answers, answerSelected = answerState.value
-            ) { selected ->
-                viewModel.setAnswer(selected)
+            AnimatedVisibility(visible = !loadingState.value) {
+                Column(
+                    modifier = Modifier
+                        .padding(30.dp)
+                ) {
+                    HeaderSection(
+                        text = value.question,
+                        questionCount = value.questionCount,
+                        questionNumber = value.questionNumber
+                    )
+                    VerticalSpace()
+                    AnswersList(
+                        answers = value.answers, answerSelected = answerState.value
+                    ) { selected ->
+                        viewModel.setAnswer(selected)
+                    }
+                }
             }
             if (errorState.value.isNotEmpty()) {
                 ErrorMessage(

@@ -17,8 +17,8 @@ import androidx.compose.ui.unit.dp
 fun ErrorMessage(message: String, modifier: Modifier = Modifier, color: Color = Color.Red) {
     Box(
         modifier = modifier
-            .fillMaxWidth()
             .padding(8.dp)
+            .fillMaxWidth()
     ) {
         Text(
             text = message,
