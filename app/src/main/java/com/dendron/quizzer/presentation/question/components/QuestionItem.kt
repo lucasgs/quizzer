@@ -9,20 +9,22 @@ import androidx.compose.material3.ElevatedFilterChip
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.dendron.quizzer.presentation.ui.theme.Gray200
-import com.dendron.quizzer.presentation.ui.theme.Green400
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AnswerItem(
     text: String, selected: Boolean, modifier: Modifier = Modifier, onClick: (String) -> Unit
 ) {
-    val containerColor = if (selected) Green400 else Gray200
+//    val containerColor = if (selected) MaterialTheme.colorScheme.primary else Gray200
+    val containerColor =
+//        if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onPrimary
+        if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSecondary
     val textColor = if (selected) Color.White else Color.Black
 
     Box(

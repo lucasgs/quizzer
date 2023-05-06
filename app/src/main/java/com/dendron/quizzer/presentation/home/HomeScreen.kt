@@ -4,15 +4,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.dendron.quizzer.R
 import com.dendron.quizzer.presentation.components.VerticalSpace
@@ -29,20 +27,18 @@ fun HomeScreen(navController: NavHostController) {
             .fillMaxSize()
     ) {
         Text(
-            text = stringResource(R.string.app_name),
-            fontSize = 50.sp,
-            fontStyle = FontStyle.Italic,
-            fontWeight = FontWeight.Bold
+            stringResource(R.string.app_name),
+            color = MaterialTheme.colorScheme.primary,
+            style = MaterialTheme.typography.headlineLarge,
         )
+        VerticalSpace()
         VerticalSpace()
         Button(onClick = {
             coroutineScope.launch {
                 navController.navigate(Screen.QUESTION.route)
             }
-
         }) {
             Text(stringResource(R.string.start))
         }
-
     }
 }

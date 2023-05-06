@@ -73,17 +73,16 @@ class QuestionViewModel @Inject constructor(private val questionRepository: Triv
     }
 
     private fun updateGameState() {
-//        val progress = "Question ${game.getProgress()}, Score: ${game.getScore()}"
-        val progress = "Question ${game.getProgress()}"
         val question = game.getCurrentQuestion()
         val answers = (question.incorrectAnswer + question.correctAnswer).shuffled()
             .map { it.parseAsHtml().toString() }
         _state.update { questionState ->
             questionState.copy(
-                progress = progress,
                 question = question.text.parseAsHtml().toString(),
                 answers = answers,
-                score = game.getScore().toString()
+                score = game.getScore().toString(),
+                questionCount = game.getQuestionCount().toString(),
+                questionNumber = game.getQuestionNumber().toString(),
             )
         }
     }
@@ -108,5 +107,6 @@ class QuestionViewModel @Inject constructor(private val questionRepository: Triv
 
     fun setAnswer(answer: String) {
         _answer.update { answer }
+        _error.update { "" }
     }
 }

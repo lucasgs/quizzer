@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
@@ -14,6 +15,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.dendron.quizzer.presentation.components.MainLayout
+import com.dendron.quizzer.presentation.components.VerticalSpace
 import com.dendron.quizzer.presentation.navigation.Screen
 import com.dendron.quizzer.presentation.question.components.AnswersList
 import com.dendron.quizzer.presentation.question.components.ErrorMessage
@@ -52,7 +54,12 @@ fun QuestionScreen(
                 .fillMaxSize()
                 .padding(30.dp)
         ) {
-            HeaderSection(progress = value.progress, text = value.question)
+            HeaderSection(
+                text = value.question,
+                questionCount = value.questionCount,
+                questionNumber = value.questionNumber
+            )
+            VerticalSpace()
             AnswersList(
                 answers = value.answers,
                 answerSelected = answerState.value
@@ -60,7 +67,7 @@ fun QuestionScreen(
                 viewModel.setAnswer(selected)
             }
             if (errorState.value.isNotEmpty()) {
-                ErrorMessage(errorState.value)
+                ErrorMessage(errorState.value, color = MaterialTheme.colorScheme.secondary)
             }
             if (loadingState.value) {
                 Box(modifier = Modifier.fillMaxSize()) {

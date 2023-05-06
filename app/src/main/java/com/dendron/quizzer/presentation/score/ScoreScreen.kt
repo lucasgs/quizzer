@@ -10,24 +10,22 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.dendron.quizzer.R
 import com.dendron.quizzer.presentation.components.MainLayout
 import com.dendron.quizzer.presentation.components.VerticalSpace
 import com.dendron.quizzer.presentation.navigation.Screen
-import com.dendron.quizzer.presentation.ui.theme.Purple40
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -49,17 +47,21 @@ fun ScoreSection(score: String, modifier: Modifier = Modifier) {
             ) {
                 Text(
                     text = stringResource(R.string.score),
-                    fontSize = 30.sp,
-                    fontStyle = FontStyle.Italic,
-                    color = Color.Gray,
+                    style = MaterialTheme.typography.displayMedium,
+                    color = MaterialTheme.colorScheme.secondary,
+//                    fontSize = 30.sp,
+//                    fontStyle = FontStyle.Italic,
+//                    color = Color.Gray,
                 )
                 VerticalSpace()
                 Text(
                     text = score,
-                    fontSize = 30.sp,
+                    style = MaterialTheme.typography.displayLarge,
+                    color = MaterialTheme.colorScheme.primary,
+//                    fontSize = 30.sp,
                     fontStyle = FontStyle.Italic,
                     fontWeight = FontWeight.Bold,
-                    color = Purple40,
+//                    color = Purple40,
                 )
             }
 

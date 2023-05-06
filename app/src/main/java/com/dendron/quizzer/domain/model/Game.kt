@@ -23,8 +23,9 @@ class Game {
 
     private fun getCurrentCorrectAnswer() = questionList[questionNumber].correctAnswer
 
-    //    fun getProgress() = (questionNumber + 1) / questionList.size.toFloat()
-    fun getProgress() = "${questionNumber + 1} / ${questionList.size}"
+    fun getQuestionNumber() = questionNumber + 1
+
+    fun getQuestionCount() = questionList.size
 
     fun getScore() = score
 

@@ -9,8 +9,8 @@ interface OpenTriviaDbApi {
     @GET("api.php")
     suspend fun getQuestions(
         @Query("amount") amount: Int = QUESTION_COUNT,
-        @Query("difficulty") difficulty: String = "",
-        @Query("category") category: String = "",
+        @Query("difficulty") difficulty: String = "easy",
+        @Query("category") category: String = "17",
     ): Trivia
 }
 
