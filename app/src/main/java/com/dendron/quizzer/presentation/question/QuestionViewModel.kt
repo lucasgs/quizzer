@@ -38,6 +38,9 @@ class QuestionViewModel @Inject constructor(private val questionRepository: Triv
     private val _loading = MutableStateFlow(false)
     val loading = _loading.asStateFlow()
 
+    private val _answerResult = MutableStateFlow<AnswerResult>(AnswerResult.None)
+    val answerResult = _answerResult.asStateFlow()
+
     private val _gameEnded = MutableStateFlow(false)
     val gameEnded = _state.map {
         game.getStatus() == (Status.ENDED)
@@ -94,11 +97,12 @@ class QuestionViewModel @Inject constructor(private val questionRepository: Triv
                 "Please, select an answer :)"
             }
         } else {
-            game.checkAnswer(currentAnswer)
+//            game.checkAnswer(currentAnswer)
             game.nextQuestion()
             updateGameState()
             _error.update { "" }
             _answer.update { "" }
+            _answerResult.update { AnswerResult.None }
             _gameEnded.update {
                 game.getStatus() == Status.ENDED
             }
@@ -106,7 +110,22 @@ class QuestionViewModel @Inject constructor(private val questionRepository: Triv
     }
 
     fun setAnswer(answer: String) {
-        _answer.update { answer }
-        _error.update { "" }
+        if (_answerResult.value == AnswerResult.None) {
+            _answer.update { answer }
+            _error.update { "" }
+
+            _answerResult.update {
+                if (game.checkAnswer(answer)) {
+                    AnswerResult.Correct(
+                        message = "Nice :)"
+                    )
+                } else {
+                    AnswerResult.Incorrect(
+                        message = "The correct was: '" +
+                                game.getCurrentCorrectAnswer() + "' :("
+                    )
+                }
+            }
+        }
     }
 }

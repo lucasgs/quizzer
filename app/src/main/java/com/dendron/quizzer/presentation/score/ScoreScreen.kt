@@ -42,26 +42,21 @@ fun ScoreSection(score: String, modifier: Modifier = Modifier) {
         ) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.SpaceAround,
+                verticalArrangement = Arrangement.Center,
                 modifier = Modifier.fillMaxSize()
             ) {
                 Text(
                     text = stringResource(R.string.score),
                     style = MaterialTheme.typography.displayMedium,
                     color = MaterialTheme.colorScheme.secondary,
-//                    fontSize = 30.sp,
-//                    fontStyle = FontStyle.Italic,
-//                    color = Color.Gray,
                 )
                 VerticalSpace()
                 Text(
                     text = score,
                     style = MaterialTheme.typography.displayLarge,
                     color = MaterialTheme.colorScheme.primary,
-//                    fontSize = 30.sp,
                     fontStyle = FontStyle.Italic,
                     fontWeight = FontWeight.Bold,
-//                    color = Purple40,
                 )
             }
 

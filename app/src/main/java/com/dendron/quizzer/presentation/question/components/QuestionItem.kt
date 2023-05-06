@@ -1,5 +1,6 @@
 package com.dendron.quizzer.presentation.question.components
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -21,15 +22,12 @@ import androidx.compose.ui.unit.dp
 fun AnswerItem(
     text: String, selected: Boolean, modifier: Modifier = Modifier, onClick: (String) -> Unit
 ) {
-//    val containerColor = if (selected) MaterialTheme.colorScheme.primary else Gray200
     val containerColor =
-//        if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onPrimary
         if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSecondary
-    val textColor = if (selected) Color.White else Color.Black
+    val textColor = if (selected or isSystemInDarkTheme()) Color.White else Color.Black
 
     Box(
-        modifier = modifier
-            .padding(top = 8.dp)
+        modifier = modifier.padding(top = 8.dp)
     ) {
         ElevatedFilterChip(onClick = { onClick(text) },
             selected = false,
@@ -50,7 +48,6 @@ fun AnswerItem(
             } else {
                 null
             },
-            modifier = Modifier
-        )
+            modifier = Modifier)
     }
 }

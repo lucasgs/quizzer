@@ -20,18 +20,19 @@ import com.dendron.quizzer.presentation.navigation.Screen
 import com.dendron.quizzer.presentation.question.components.AnswersList
 import com.dendron.quizzer.presentation.question.components.ErrorMessage
 import com.dendron.quizzer.presentation.question.components.HeaderSection
+import com.dendron.quizzer.presentation.question.components.InfoMessage
 import com.dendron.quizzer.presentation.question.components.QuestionActions
 
 @Composable
 fun QuestionScreen(
-    navController: NavHostController,
-    viewModel: QuestionViewModel = hiltViewModel()
+    navController: NavHostController, viewModel: QuestionViewModel = hiltViewModel()
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle()
     val answerState = viewModel.answer.collectAsStateWithLifecycle()
     val errorState = viewModel.error.collectAsStateWithLifecycle()
     val loadingState = viewModel.loading.collectAsStateWithLifecycle()
     val gameEnded = viewModel.gameEnded.collectAsStateWithLifecycle()
+    val answerResultState = viewModel.answerResult.collectAsStateWithLifecycle()
     val value = state.value
 
     if (gameEnded.value) {
@@ -42,13 +43,11 @@ fun QuestionScreen(
         }
     }
 
-    MainLayout(
-        bottomBar = {
-            QuestionActions() {
-                viewModel.nextQuestion()
-            }
+    MainLayout(bottomBar = {
+        QuestionActions() {
+            viewModel.nextQuestion()
         }
-    ) {
+    }) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -61,21 +60,38 @@ fun QuestionScreen(
             )
             VerticalSpace()
             AnswersList(
-                answers = value.answers,
-                answerSelected = answerState.value
+                answers = value.answers, answerSelected = answerState.value
             ) { selected ->
                 viewModel.setAnswer(selected)
             }
             if (errorState.value.isNotEmpty()) {
-                ErrorMessage(errorState.value, color = MaterialTheme.colorScheme.secondary)
+                ErrorMessage(
+                    errorState.value, color = MaterialTheme.colorScheme.secondary
+                )
             }
             if (loadingState.value) {
                 Box(modifier = Modifier.fillMaxSize()) {
                     CircularProgressIndicator(
-                        modifier = Modifier
-                            .align(Alignment.Center)
+                        modifier = Modifier.align(Alignment.Center)
                     )
                 }
+            }
+
+            when (val result = answerResultState.value) {
+                is AnswerResult.Correct -> {
+                    InfoMessage(
+                        message = result.message,
+                        color = MaterialTheme.colorScheme.primary,
+                    )
+                }
+
+                is AnswerResult.Incorrect -> {
+                    ErrorMessage(
+                        message = result.message
+                    )
+                }
+
+                AnswerResult.None -> Unit
             }
         }
     }

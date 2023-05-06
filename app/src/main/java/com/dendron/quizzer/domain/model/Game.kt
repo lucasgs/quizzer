@@ -21,7 +21,7 @@ class Game {
 
     fun getCurrentQuestion() = questionList[questionNumber]
 
-    private fun getCurrentCorrectAnswer() = questionList[questionNumber].correctAnswer
+    fun getCurrentCorrectAnswer() = questionList[questionNumber].correctAnswer
 
     fun getQuestionNumber() = questionNumber + 1
 
