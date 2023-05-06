@@ -12,6 +12,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.core.text.parseAsHtml
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
@@ -60,13 +61,14 @@ fun QuestionScreen(
                         .padding(30.dp)
                 ) {
                     HeaderSection(
-                        text = value.question,
+                        text = value.question.parseAsHtml().toString(),
                         questionCount = value.questionCount,
                         questionNumber = value.questionNumber
                     )
                     VerticalSpace()
                     AnswersList(
-                        answers = value.answers, answerSelected = answerState.value
+                        answers = value.answers.map { it.parseAsHtml().toString() },
+                        answerSelected = answerState.value
                     ) { selected ->
                         viewModel.setAnswer(selected)
                     }

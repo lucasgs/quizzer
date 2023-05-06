@@ -1,11 +1,13 @@
 package com.dendron.quizzer.domain.model
 
+import javax.inject.Inject
+
 enum class Status {
     PLAYING,
     ENDED
 }
 
-class Game {
+class Game @Inject constructor() {
 
     private var questionList: MutableList<Question> = mutableListOf()
     private var questionNumber = 0

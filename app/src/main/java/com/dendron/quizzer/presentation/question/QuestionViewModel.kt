@@ -21,10 +21,11 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class QuestionViewModel @Inject constructor(private val questionRepository: TriviaRepository) :
+class QuestionViewModel @Inject constructor(
+    private val questionRepository: TriviaRepository,
+    private var game: Game
+) :
     ViewModel() {
-
-    private var game = Game()
 
     private val _state = MutableStateFlow(QuestionState())
     val state = _state.asStateFlow()
@@ -78,10 +79,9 @@ class QuestionViewModel @Inject constructor(private val questionRepository: Triv
     private fun updateGameState() {
         val question = game.getCurrentQuestion()
         val answers = (question.incorrectAnswer + question.correctAnswer).shuffled()
-            .map { it.parseAsHtml().toString() }
         _state.update { questionState ->
             questionState.copy(
-                question = question.text.parseAsHtml().toString(),
+                question = question.text,
                 answers = answers,
                 score = game.getScore().toString(),
                 questionCount = game.getQuestionCount().toString(),
