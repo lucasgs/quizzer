@@ -8,11 +8,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.core.text.parseAsHtml
+import com.dendron.quizzer.presentation.question.QuestionResult
 
 @Composable
 fun AnswersList(
-    answers: List<String>,
+    answers: List<QuestionResult>,
     answerSelected: String,
+    showCorrect: Boolean,
     modifier: Modifier = Modifier,
     onSelected: (String) -> Unit
 ) {
@@ -23,8 +26,13 @@ fun AnswersList(
             .fillMaxWidth()
             .padding(8.dp)
     ) {
-        answers.forEach { text ->
-            AnswerItem(text = text, text == answerSelected) {
+        answers.forEach { question ->
+            AnswerItem(
+                text = question.text.parseAsHtml().toString(),
+                isSelected = question.text == answerSelected,
+                isCorrect = question.isCorrect,
+                showCorrect = showCorrect
+            ) {
                 onSelected(it)
             }
         }

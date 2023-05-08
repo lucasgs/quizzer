@@ -82,7 +82,12 @@ class QuestionViewModel @Inject constructor(
         _state.update { questionState ->
             questionState.copy(
                 question = question.text,
-                answers = answers,
+                answers = answers.map { answer ->
+                    QuestionResult(
+                        text = answer,
+                        isCorrect = (answer == question.correctAnswer)
+                    )
+                },
                 score = game.getScore().toString(),
                 questionCount = game.getQuestionCount().toString(),
                 questionNumber = game.getQuestionNumber().toString(),
@@ -94,7 +99,7 @@ class QuestionViewModel @Inject constructor(
         val currentAnswer = _answer.value
         if (currentAnswer.isEmpty()) {
             _error.update {
-                "Please, select an answer :)"
+                "Please, select an answer."
             }
         } else {
 //            game.checkAnswer(currentAnswer)

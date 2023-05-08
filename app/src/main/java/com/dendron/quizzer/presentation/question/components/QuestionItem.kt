@@ -2,9 +2,11 @@ package com.dendron.quizzer.presentation.question.components
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.ElevatedFilterChip
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -13,41 +15,62 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AnswerItem(
-    text: String, selected: Boolean, modifier: Modifier = Modifier, onClick: (String) -> Unit
+    text: String,
+    isSelected: Boolean,
+    isCorrect: Boolean,
+    showCorrect: Boolean,
+    modifier: Modifier = Modifier,
+    onClick: (String) -> Unit
 ) {
-    val containerColor =
-        if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSecondary
-    val textColor = if (selected or isSystemInDarkTheme()) Color.White else Color.Black
+    val iconColor = MaterialTheme.colorScheme.primary
+    val textColor = if (isSelected || isSystemInDarkTheme()) Color.White else Color.Black
 
     Box(
         modifier = modifier.padding(top = 8.dp)
     ) {
-        ElevatedFilterChip(onClick = { onClick(text) },
-            selected = false,
-            label = { Text(text) },
-            colors = FilterChipDefaults.elevatedFilterChipColors(
-                containerColor = containerColor,
-                labelColor = textColor,
-                iconColor = textColor,
-            ),
-            trailingIcon = if (selected) {
-                {
-                    Icon(
-                        imageVector = Icons.Filled.Done,
-                        contentDescription = null,
-                        modifier = Modifier.size(FilterChipDefaults.IconSize)
+
+        ElevatedFilterChip(
+            onClick = { onClick(text) },
+            selected = isSelected,
+            label = {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                ) {
+                    Text(
+                        text = text,
+                        textAlign = TextAlign.Center,
+                        softWrap = true,
+                        modifier = Modifier.align(Alignment.Center)
                     )
+                    if (showCorrect && (isCorrect || isSelected)) {
+                        Icon(
+                            imageVector = if (isCorrect) Icons.Filled.Done else Icons.Filled.Close,
+                            contentDescription = null,
+                            modifier = Modifier
+                                .size(FilterChipDefaults.IconSize)
+                                .align(Alignment.CenterEnd)
+                        )
+
+                    }
                 }
-            } else {
-                null
             },
-            modifier = Modifier)
+            colors = FilterChipDefaults.elevatedFilterChipColors(
+                labelColor = textColor,
+                iconColor = iconColor,
+            ),
+
+            modifier = Modifier
+                .fillMaxWidth()
+        )
     }
 }

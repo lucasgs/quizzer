@@ -22,7 +22,6 @@ import com.dendron.quizzer.presentation.navigation.Screen
 import com.dendron.quizzer.presentation.question.components.AnswersList
 import com.dendron.quizzer.presentation.question.components.ErrorMessage
 import com.dendron.quizzer.presentation.question.components.HeaderSection
-import com.dendron.quizzer.presentation.question.components.InfoMessage
 import com.dendron.quizzer.presentation.question.components.QuestionActions
 
 @Composable
@@ -47,8 +46,10 @@ fun QuestionScreen(
 
     MainLayout(
         bottomBar = {
-            QuestionActions() {
-                viewModel.nextQuestion()
+            AnimatedVisibility(visible = !loadingState.value) {
+                QuestionActions() {
+                    viewModel.nextQuestion()
+                }
             }
         }) {
         Column(
@@ -67,8 +68,9 @@ fun QuestionScreen(
                     )
                     VerticalSpace()
                     AnswersList(
-                        answers = value.answers.map { it.parseAsHtml().toString() },
-                        answerSelected = answerState.value
+                        answers = value.answers,
+                        answerSelected = answerState.value,
+                        showCorrect = answerResultState.value != AnswerResult.None
                     ) { selected ->
                         viewModel.setAnswer(selected)
                     }
@@ -85,23 +87,6 @@ fun QuestionScreen(
                         modifier = Modifier.align(Alignment.Center)
                     )
                 }
-            }
-
-            when (val result = answerResultState.value) {
-                is AnswerResult.Correct -> {
-                    InfoMessage(
-                        message = result.message,
-                        color = MaterialTheme.colorScheme.primary,
-                    )
-                }
-
-                is AnswerResult.Incorrect -> {
-                    ErrorMessage(
-                        message = result.message
-                    )
-                }
-
-                AnswerResult.None -> Unit
             }
         }
     }
