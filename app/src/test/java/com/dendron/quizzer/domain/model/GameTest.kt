@@ -84,7 +84,7 @@ class GameTest {
 
         val expectedQuestion = questionList[1]
         val expectedQuestionNumber = 2
-        val expectedScore = 1
+        val expectedScore = 100
         val expectedStatus = Status.PLAYING
 
         game.checkAnswer(answer)
@@ -119,7 +119,7 @@ class GameTest {
         val answer1 = questionList.first().correctAnswer
         val answer2 = questionList[1].correctAnswer
 
-        val expectedScore = 2
+        val expectedScore = 200
         val expectedStatus = Status.ENDED
 
         game.checkAnswer(answer1)
