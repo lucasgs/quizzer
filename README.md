@@ -8,7 +8,7 @@ Engage in a fun and entertaining way of testing your knowledge on a wide range o
   <img src="screenshots/4.png" width="150" />
   <img src="screenshots/5.png" width="150" />
 </p>
-Screenshots made with [Screenshots.pro](https://screenshots.pro/)
+Screenshots made with https://screenshots.pro
 
 ## Android Components
 
