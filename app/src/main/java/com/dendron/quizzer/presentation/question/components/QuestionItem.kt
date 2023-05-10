@@ -59,6 +59,7 @@ fun AnswerItem(
                             modifier = Modifier
                                 .size(FilterChipDefaults.IconSize)
                                 .align(Alignment.CenterEnd)
+                                .padding(2.dp)
                         )
 
                     }

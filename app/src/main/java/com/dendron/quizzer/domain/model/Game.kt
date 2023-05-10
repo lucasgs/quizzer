@@ -1,5 +1,6 @@
 package com.dendron.quizzer.domain.model
 
+import androidx.compose.runtime.Composable
 import javax.inject.Inject
 
 enum class Status {
@@ -33,7 +34,7 @@ class Game @Inject constructor() {
 
     fun checkAnswer(answer: String): Boolean {
         return if (getCurrentCorrectAnswer() == answer) {
-            score += 1
+            score += SCORE_BY_ANSWER
             true
         } else {
             false
@@ -49,5 +50,9 @@ class Game @Inject constructor() {
         } else {
             status = Status.ENDED
         }
+    }
+
+    companion object {
+        private const val SCORE_BY_ANSWER = 100
     }
 }
