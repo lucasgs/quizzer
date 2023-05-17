@@ -3,7 +3,7 @@ composeUI = "1.4.3"
 daggerHilt = "2.44"
 retrofit = "2.9.0"
 androidLifecycleRuntime = "2.6.1"
-androidPlugin = "7.4.0"
+androidPlugin = "8.0.1"
 
 [libraries]
 androidx-activity-compose = "androidx.activity:activity-compose:1.7.1"
