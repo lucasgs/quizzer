@@ -13,4 +13,4 @@ dependencyResolutionManagement {
     }
 }
 rootProject.name = "Quizzer"
-include ':app'
+include(":app")
