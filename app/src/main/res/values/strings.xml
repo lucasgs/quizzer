@@ -4,6 +4,9 @@
     <string name="score">Score</string>
     <string name="close">Close</string>
     <string name="play_again">Play again</string>
+    <string name="save">Save</string>
     <string name="next">Next</string>
     <string name="question">Question %s</string>
+    <string name="settings">Settings</string>
+    <string name="how_many_questions">How many question?</string>
 </resources>

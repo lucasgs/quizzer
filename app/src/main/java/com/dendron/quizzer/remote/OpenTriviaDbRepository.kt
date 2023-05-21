@@ -14,7 +14,8 @@ class OpenTriviaDbRepository @Inject constructor(private val api: OpenTriviaDbAp
         flow {
             try {
                 emit(Resource.Loading())
-                val questions = api.getQuestions().results.map { it.toModel() }
+                val questions =
+                    api.getQuestions(amount = numberOfQuestions).results.map { it.toModel() }
                 emit(Resource.Success(questions))
             } catch (e: Exception) {
                 emit(Resource.Error(e.localizedMessage))

@@ -49,7 +49,7 @@ class OpenTriviaDbRepositoryTest {
         val expectedLoading = Resource.Loading<List<Question>>()
         val expectedSuccess = Resource.Success(results)
 
-        repository.getQuestions().test {
+        repository.getQuestions(numberOfQuestions = questionNumber).test {
             assertEquals(expectedLoading, awaitItem())
             assertEquals(expectedSuccess, awaitItem())
             awaitComplete()
@@ -67,7 +67,7 @@ class OpenTriviaDbRepositoryTest {
             Exception(errorMessage)
         }
 
-        repository.getQuestions().test {
+        repository.getQuestions(numberOfQuestions = questionNumber).test {
             assertEquals(expectedLoading, awaitItem())
             assertEquals(expectedError, awaitItem())
             awaitComplete()
@@ -75,6 +75,9 @@ class OpenTriviaDbRepositoryTest {
     }
 
     companion object {
+
+        private val questionNumber = 10
+
         private val questions = listOf(
             Result(
                 category = "9",

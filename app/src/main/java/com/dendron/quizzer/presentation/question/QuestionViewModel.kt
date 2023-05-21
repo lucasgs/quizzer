@@ -7,11 +7,13 @@ import androidx.lifecycle.viewModelScope
 import com.dendron.quizzer.common.Resource
 import com.dendron.quizzer.domain.model.Game
 import com.dendron.quizzer.domain.model.Status
+import com.dendron.quizzer.domain.repository.SettingsRepository
 import com.dendron.quizzer.domain.repository.TriviaRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
@@ -23,6 +25,7 @@ import javax.inject.Inject
 @HiltViewModel
 class QuestionViewModel @Inject constructor(
     private val questionRepository: TriviaRepository,
+    private val settingsRepository: SettingsRepository,
     private var game: Game
 ) :
     ViewModel() {
@@ -57,22 +60,24 @@ class QuestionViewModel @Inject constructor(
 
     private fun fetchQuestionList() {
         viewModelScope.launch {
-            questionRepository.getQuestions().onEach { resource ->
-                when (resource) {
-                    is Resource.Error -> {
-                        _loading.update { false }
-                        _error.update { "There was an error loading the questions :(" }
-                        Log.e("Quizzer", "fetchQuestionList: ${resource.message.toString()}")
-                    }
+            val settings = settingsRepository.getSettings().first()
+            questionRepository.getQuestions(numberOfQuestions = settings.questionCount)
+                .onEach { resource ->
+                    when (resource) {
+                        is Resource.Error -> {
+                            _loading.update { false }
+                            _error.update { "There was an error loading the questions :(" }
+                            Log.e("Quizzer", "fetchQuestionList: ${resource.message.toString()}")
+                        }
 
-                    is Resource.Loading -> _loading.update { true }
-                    is Resource.Success -> {
-                        game.start(resource.data)
-                        updateGameState()
-                        _loading.update { false }
+                        is Resource.Loading -> _loading.update { true }
+                        is Resource.Success -> {
+                            game.start(resource.data)
+                            updateGameState()
+                            _loading.update { false }
+                        }
                     }
-                }
-            }.launchIn(viewModelScope)
+                }.launchIn(viewModelScope)
         }
     }
 

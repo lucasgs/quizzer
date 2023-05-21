@@ -1,7 +1,9 @@
 package com.dendron.quizzer.di
 
 import com.dendron.quizzer.common.Constants
+import com.dendron.quizzer.domain.repository.SettingsRepository
 import com.dendron.quizzer.domain.repository.TriviaRepository
+import com.dendron.quizzer.local.LocalSettingsRepository
 import com.dendron.quizzer.remote.OpenTriviaDbApi
 import com.dendron.quizzer.remote.OpenTriviaDbRepository
 import dagger.Module
@@ -37,5 +39,11 @@ class AppModule {
         api: OpenTriviaDbApi
     ): TriviaRepository {
         return OpenTriviaDbRepository(api)
+    }
+
+    @Provides
+    @Singleton
+    fun provideSettingsRepository(): SettingsRepository {
+        return LocalSettingsRepository()
     }
 }

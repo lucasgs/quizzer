@@ -5,5 +5,5 @@ import com.dendron.quizzer.domain.model.Question
 import kotlinx.coroutines.flow.Flow
 
 interface TriviaRepository {
-    suspend fun getQuestions(numberOfQuestions: Int = 10): Flow<Resource<List<Question>>>
+    suspend fun getQuestions(numberOfQuestions: Int): Flow<Resource<List<Question>>>
 }
