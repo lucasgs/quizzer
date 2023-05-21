@@ -4,11 +4,12 @@ import app.cash.turbine.test
 import com.dendron.quizzer.MainDispatcherRule
 import com.dendron.quizzer.common.Resource
 import com.dendron.quizzer.data.model.Trivia
+import com.dendron.quizzer.domain.model.Category
+import com.dendron.quizzer.domain.model.Difficulty
 import com.dendron.quizzer.domain.model.Question
 import com.dendron.quizzer.remote.model.Result
 import com.dendron.quizzer.remote.model.toModel
 import junit.framework.TestCase.assertEquals
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
@@ -18,7 +19,6 @@ import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
 import org.mockito.kotlin.whenever
 
-@OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(MockitoJUnitRunner::class)
 class OpenTriviaDbRepositoryTest {
 
@@ -49,7 +49,11 @@ class OpenTriviaDbRepositoryTest {
         val expectedLoading = Resource.Loading<List<Question>>()
         val expectedSuccess = Resource.Success(results)
 
-        repository.getQuestions(numberOfQuestions = questionNumber).test {
+        repository.getQuestions(
+            numberOfQuestions = questionNumber,
+            difficulty = difficulty,
+            category = category
+        ).test {
             assertEquals(expectedLoading, awaitItem())
             assertEquals(expectedSuccess, awaitItem())
             awaitComplete()
@@ -67,7 +71,11 @@ class OpenTriviaDbRepositoryTest {
             Exception(errorMessage)
         }
 
-        repository.getQuestions(numberOfQuestions = questionNumber).test {
+        repository.getQuestions(
+            numberOfQuestions = questionNumber,
+            difficulty = difficulty,
+            category = category
+        ).test {
             assertEquals(expectedLoading, awaitItem())
             assertEquals(expectedError, awaitItem())
             awaitComplete()
@@ -77,6 +85,8 @@ class OpenTriviaDbRepositoryTest {
     companion object {
 
         private val questionNumber = 10
+        private val difficulty = Difficulty.Any
+        private val category = Category.Any
 
         private val questions = listOf(
             Result(

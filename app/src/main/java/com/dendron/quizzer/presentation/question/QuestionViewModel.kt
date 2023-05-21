@@ -27,8 +27,7 @@ class QuestionViewModel @Inject constructor(
     private val questionRepository: TriviaRepository,
     private val settingsRepository: SettingsRepository,
     private var game: Game
-) :
-    ViewModel() {
+) : ViewModel() {
 
     private val _state = MutableStateFlow(QuestionState())
     val state = _state.asStateFlow()
@@ -61,23 +60,26 @@ class QuestionViewModel @Inject constructor(
     private fun fetchQuestionList() {
         viewModelScope.launch {
             val settings = settingsRepository.getSettings().first()
-            questionRepository.getQuestions(numberOfQuestions = settings.questionCount)
-                .onEach { resource ->
-                    when (resource) {
-                        is Resource.Error -> {
-                            _loading.update { false }
-                            _error.update { "There was an error loading the questions :(" }
-                            Log.e("Quizzer", "fetchQuestionList: ${resource.message.toString()}")
-                        }
-
-                        is Resource.Loading -> _loading.update { true }
-                        is Resource.Success -> {
-                            game.start(resource.data)
-                            updateGameState()
-                            _loading.update { false }
-                        }
+            questionRepository.getQuestions(
+                numberOfQuestions = settings.questionCount,
+                difficulty = settings.difficulty,
+                category = settings.category,
+            ).onEach { resource ->
+                when (resource) {
+                    is Resource.Error -> {
+                        _loading.update { false }
+                        _error.update { "There was an error loading the questions :(" }
+                        Log.e("Quizzer", "fetchQuestionList: ${resource.message.toString()}")
                     }
-                }.launchIn(viewModelScope)
+
+                    is Resource.Loading -> _loading.update { true }
+                    is Resource.Success -> {
+                        game.start(resource.data)
+                        updateGameState()
+                        _loading.update { false }
+                    }
+                }
+            }.launchIn(viewModelScope)
         }
     }
 
@@ -89,8 +91,7 @@ class QuestionViewModel @Inject constructor(
                 question = question.text,
                 answers = answers.map { answer ->
                     QuestionResult(
-                        text = answer,
-                        isCorrect = (answer == question.correctAnswer)
+                        text = answer, isCorrect = (answer == question.correctAnswer)
                     )
                 },
                 score = game.getScore().toString(),
@@ -130,13 +131,11 @@ class QuestionViewModel @Inject constructor(
                         message = "Nice :)"
                     )
                 } else {
-                    AnswerResult.Incorrect(
-                        buildString {
-                            append("The correct was: '")
-                            append(game.getCurrentCorrectAnswer().parseAsHtml().toString())
-                            append("'")
-                        }
-                    )
+                    AnswerResult.Incorrect(buildString {
+                        append("The correct was: '")
+                        append(game.getCurrentCorrectAnswer().parseAsHtml().toString())
+                        append("'")
+                    })
                 }
             }
         }

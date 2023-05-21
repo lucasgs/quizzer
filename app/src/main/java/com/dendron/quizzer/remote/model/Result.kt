@@ -32,12 +32,12 @@ fun Result.toModel(): Question = Question(
 fun mapToType(value: String): Type = when (value) {
     "multiple" -> Type.MultipleChoice
     "boolean" -> Type.Boolean
-    else -> Type.Undefined
+    else -> Type.Any
 }
 
 fun mapToDifficulty(value: String): Difficulty = when (value) {
     "hard" -> Difficulty.Hard
     "medium" -> Difficulty.Medium
     "easy" -> Difficulty.Easy
-    else -> Difficulty.Undefined
+    else -> Difficulty.Any
 }

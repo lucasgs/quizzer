@@ -1,16 +1,16 @@
 package com.dendron.quizzer.domain.model
 
 enum class Type {
+    Any,
     MultipleChoice,
     Boolean,
-    Undefined
 }
 
 enum class Difficulty {
+    Any,
     Easy,
     Medium,
     Hard,
-    Undefined
 }
 
 data class Question(
@@ -21,3 +21,31 @@ data class Question(
     val correctAnswer: String,
     val incorrectAnswer: List<String>
 )
+
+enum class Category {
+    Any,
+    GeneralKnowledge,
+    EntertainmentBooks,
+    EntertainmentFilm,
+    EntertainmentMusic,
+    EntertainmentMusicalsAndTheatres,
+    EntertainmentTelevision,
+    EntertainmentVideoGames,
+    EntertainmentBoardGames,
+    ScienceAndNature,
+    ScienceComputers,
+    ScienceMathematics,
+    Mythology,
+    Sports,
+    Geography,
+    History,
+    Politics,
+    Art,
+    Celebrities,
+    Animals,
+    Vehicles,
+    EntertainmentComics,
+    ScienceGadgets,
+    EntertainmentJapaneseAnimeAndMange,
+    EntertainmentCartoonAndAnimation,
+}

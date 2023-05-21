@@ -9,4 +9,6 @@
     <string name="question">Question %s</string>
     <string name="settings">Settings</string>
     <string name="how_many_questions">How many question?</string>
+    <string name="which_difficulty">Which difficulty?</string>
+    <string name="which_category">Which category?</string>
 </resources>
