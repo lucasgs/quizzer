@@ -15,8 +15,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.dendron.quizzer.R
@@ -30,8 +34,7 @@ fun HomeScreen(navController: NavHostController) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceBetween,
-        modifier = Modifier
-            .fillMaxSize()
+        modifier = Modifier.fillMaxSize()
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -59,10 +62,18 @@ fun HomeScreen(navController: NavHostController) {
     }
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun SettingsIconButton(onClick: () -> Unit) {
-    Box(modifier = Modifier.padding(bottom = 20.dp)) {
-        FilledIconButton(onClick = { onClick() }) {
+    Box(
+        modifier = Modifier.padding(bottom = 20.dp)
+    ) {
+        FilledIconButton(
+            onClick = { onClick() },
+            modifier = Modifier
+                .semantics { testTagsAsResourceId = true }
+                .testTag("SettingsButton"),
+        ) {
             Icon(Icons.Outlined.Settings, contentDescription = null)
         }
     }

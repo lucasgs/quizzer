@@ -87,6 +87,9 @@ dependencies {
 
     // Turbine for testing flows
     testImplementation(libs.turbine)
+
+    // Datastore
+    implementation(libs.androidx.datastore.preferences)
 }
 
 kapt {

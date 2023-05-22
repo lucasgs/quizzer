@@ -41,11 +41,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun SettingScreen(navController: NavHostController, viewModel: SettingViewModel = hiltViewModel()) {
     val coroutineScope = rememberCoroutineScope()
-    val settings = viewModel.settings.collectAsStateWithLifecycle()
-
-    var questionCount by remember { mutableStateOf(settings.value.questionCount) }
-    var difficulty by remember { mutableStateOf(settings.value.difficulty) }
-    var category by remember { mutableStateOf(settings.value.category) }
+    val state = viewModel.state.collectAsStateWithLifecycle()
 
     fun navigateToHomeScreen() {
         coroutineScope.launch {
@@ -53,29 +49,36 @@ fun SettingScreen(navController: NavHostController, viewModel: SettingViewModel 
         }
     }
 
-    MainLayout(showBackground = false, bottomBar = {
-        SettingActionSection(onBack = {
-            navigateToHomeScreen()
-        }, onSave = {
-            viewModel.onSaveSettings(
-                questionCount = questionCount, difficulty = difficulty, category = category
-            )
-            navigateToHomeScreen()
-        })
-    }) {
-        Column(
-            verticalArrangement = Arrangement.Top, modifier = Modifier
-                .fillMaxSize()
-                .padding(10.dp)
-        ) {
-            QuestionCountSection(questionCount = questionCount.toFloat()) { newValue ->
-                questionCount = newValue.toInt()
-            }
-            DifficultySection(difficulty = difficulty) { newValue ->
-                difficulty = newValue
-            }
-            CategorySection(category = category) { newValue ->
-                category = newValue
+    state.value.settings?.let { settings ->
+
+        var questionCount by remember { mutableStateOf(settings.questionCount) }
+        var difficulty by remember { mutableStateOf(settings.difficulty) }
+        var category by remember { mutableStateOf(settings.category) }
+
+        MainLayout(showBackground = false, bottomBar = {
+            SettingActionSection(onBack = {
+                navigateToHomeScreen()
+            }, onSave = {
+                viewModel.onSaveSettings(
+                    questionCount = questionCount, difficulty = difficulty, category = category
+                )
+                navigateToHomeScreen()
+            })
+        }) {
+            Column(
+                verticalArrangement = Arrangement.Top, modifier = Modifier
+                    .fillMaxSize()
+                    .padding(10.dp)
+            ) {
+                QuestionCountSection(questionCount = questionCount.toFloat()) { newValue ->
+                    questionCount = newValue.toInt()
+                }
+                DifficultySection(difficulty = difficulty) { newValue ->
+                    difficulty = newValue
+                }
+                CategorySection(category = category) { newValue ->
+                    category = newValue
+                }
             }
         }
     }

@@ -31,6 +31,7 @@ mockito-kotlin = "org.mockito.kotlin:mockito-kotlin:4.1.0"
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 retrofit-converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "retrofit" }
 turbine = "app.cash.turbine:turbine:0.12.1"
+androidx-datastore-preferences= "androidx.datastore:datastore-preferences:1.0.0"
 
 [bundles]
 androidx-test = ["androidx-test-junit", "androidx-test-espresso", "androidx-compose-ui-test"]
