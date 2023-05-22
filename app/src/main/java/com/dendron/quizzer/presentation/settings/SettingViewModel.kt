@@ -7,9 +7,10 @@ import com.dendron.quizzer.domain.model.Difficulty
 import com.dendron.quizzer.domain.model.Settings
 import com.dendron.quizzer.domain.repository.SettingsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -18,20 +19,12 @@ class SettingViewModel @Inject constructor(
     private val settingsRepository: SettingsRepository,
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow(SettingState())
-    val state = _state.asStateFlow()
-
-    init {
-        viewModelScope.launch {
-            settingsRepository.getSettings().collect { lastSettings ->
-                _state.update {
-                    SettingState(
-                        settings = lastSettings
-                    )
-                }
-            }
-        }
-    }
+    val state: StateFlow<SettingState> =
+        settingsRepository.getSettings().map { result -> SettingState(result) }.stateIn(
+            scope = viewModelScope,
+            initialValue = SettingState(),
+            started = SharingStarted.WhileSubscribed(5_000)
+        )
 
     fun onSaveSettings(questionCount: Int, difficulty: Difficulty, category: Category) {
         viewModelScope.launch {
