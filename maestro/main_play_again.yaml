@@ -1,0 +1,7 @@
+appId: com.dendron.quizzer
+---
+- launchApp
+- tapOn: "Start"
+- runFlow: play.yaml
+- tapOn: "Play again"
+- assertVisible: "Quizzer"

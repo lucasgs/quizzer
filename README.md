@@ -33,3 +33,15 @@ Screenshots made with https://screenshots.pro
 - [Retrofit](https://github.com/square/retrofit)
  
 - [Open Trivia Database API](https://opentdb.com/)
+
+## UI Tests
+
+Make sure you have [Maestro](https://maestro.mobile.dev/) installed and it's available in 
+your PATH.
+To run the tests, open a terminal emulator and execute the following commands:
+
+```bash
+cd maestro
+maestro test main_close.yaml
+```
+For more tests, refer to the "maestro" folder.

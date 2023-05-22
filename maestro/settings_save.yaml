@@ -1,0 +1,8 @@
+appId: com.dendron.quizzer
+---
+- launchApp
+- tapOn:
+    id: "SettingsButton"
+- runFlow: settings.yaml
+- tapOn: 'Save'
+- assertVisible: 'Quizzer' 
