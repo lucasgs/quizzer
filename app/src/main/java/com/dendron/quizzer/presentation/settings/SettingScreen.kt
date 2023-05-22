@@ -49,35 +49,40 @@ fun SettingScreen(navController: NavHostController, viewModel: SettingViewModel 
         }
     }
 
-    state.value.settings?.let { settings ->
+    when (val settingState = state.value) {
+        is SettingState.Loading -> Unit
+        is SettingState.Success -> {
 
-        var questionCount by remember { mutableStateOf(settings.questionCount) }
-        var difficulty by remember { mutableStateOf(settings.difficulty) }
-        var category by remember { mutableStateOf(settings.category) }
+            val settings = settingState.data
 
-        MainLayout(showBackground = false, bottomBar = {
-            SettingActionSection(onBack = {
-                navigateToHomeScreen()
-            }, onSave = {
-                viewModel.onSaveSettings(
-                    questionCount = questionCount, difficulty = difficulty, category = category
-                )
-                navigateToHomeScreen()
-            })
-        }) {
-            Column(
-                verticalArrangement = Arrangement.Top, modifier = Modifier
-                    .fillMaxSize()
-                    .padding(10.dp)
-            ) {
-                QuestionCountSection(questionCount = questionCount.toFloat()) { newValue ->
-                    questionCount = newValue.toInt()
-                }
-                DifficultySection(difficulty = difficulty) { newValue ->
-                    difficulty = newValue
-                }
-                CategorySection(category = category) { newValue ->
-                    category = newValue
+            var questionCount by remember { mutableStateOf(settings.questionCount) }
+            var difficulty by remember { mutableStateOf(settings.difficulty) }
+            var category by remember { mutableStateOf(settings.category) }
+
+            MainLayout(showBackground = false, bottomBar = {
+                SettingActionSection(onBack = {
+                    navigateToHomeScreen()
+                }, onSave = {
+                    viewModel.onSaveSettings(
+                        questionCount = questionCount, difficulty = difficulty, category = category
+                    )
+                    navigateToHomeScreen()
+                })
+            }) {
+                Column(
+                    verticalArrangement = Arrangement.Top, modifier = Modifier
+                        .fillMaxSize()
+                        .padding(10.dp)
+                ) {
+                    QuestionCountSection(questionCount = questionCount.toFloat()) { newValue ->
+                        questionCount = newValue.toInt()
+                    }
+                    DifficultySection(difficulty = difficulty) { newValue ->
+                        difficulty = newValue
+                    }
+                    CategorySection(category = category) { newValue ->
+                        category = newValue
+                    }
                 }
             }
         }

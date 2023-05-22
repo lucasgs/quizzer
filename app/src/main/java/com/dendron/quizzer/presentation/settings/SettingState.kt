@@ -2,4 +2,7 @@ package com.dendron.quizzer.presentation.settings
 
 import com.dendron.quizzer.domain.model.Settings
 
-class SettingState(val settings: Settings? = null)
+sealed interface SettingState {
+    object Loading: SettingState
+    class Success(val data: Settings): SettingState
+}

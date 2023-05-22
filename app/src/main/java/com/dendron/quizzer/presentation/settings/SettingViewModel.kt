@@ -20,9 +20,9 @@ class SettingViewModel @Inject constructor(
 ) : ViewModel() {
 
     val state: StateFlow<SettingState> =
-        settingsRepository.getSettings().map { result -> SettingState(result) }.stateIn(
+        settingsRepository.getSettings().map { result -> SettingState.Success(result) }.stateIn(
             scope = viewModelScope,
-            initialValue = SettingState(),
+            initialValue = SettingState.Loading,
             started = SharingStarted.WhileSubscribed(5_000)
         )
 
