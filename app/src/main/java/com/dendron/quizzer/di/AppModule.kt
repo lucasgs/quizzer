@@ -34,7 +34,7 @@ class AppModule {
 
         return Retrofit.Builder()
             .client(moviesClient)
-            .baseUrl(Constants.OPENTRIVIDB_BASE_URL)
+            .baseUrl(Constants.OPENTRIVIADB_BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(OpenTriviaDbApi::class.java)
