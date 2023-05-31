@@ -9,4 +9,10 @@ data class QuestionState(
     val selected: String = "",
     val score: String = "",
     val answers: List<QuestionResult> = emptyList(),
+    val answerCorrect: String = "",
+    val gameEnded: Boolean = false,
+    val answerResult: AnswerResult = AnswerResult.None,
+    val answer: String = "",
+    val isLoading: Boolean = false,
+    val error: String = "",
 )

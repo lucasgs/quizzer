@@ -1,6 +1,5 @@
 package com.dendron.quizzer.domain.model
 
-import androidx.compose.runtime.Composable
 import javax.inject.Inject
 
 enum class Status {
@@ -42,6 +41,8 @@ class Game @Inject constructor() {
     }
 
     fun getStatus() = status
+
+    fun isGameEnded() = status == Status.ENDED
 
     fun nextQuestion() {
         status = Status.PLAYING

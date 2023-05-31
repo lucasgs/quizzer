@@ -8,17 +8,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.core.text.parseAsHtml
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavHostController
 import com.dendron.quizzer.presentation.components.MainLayout
 import com.dendron.quizzer.presentation.components.VerticalSpace
-import com.dendron.quizzer.presentation.navigation.Screen
 import com.dendron.quizzer.presentation.question.components.AnswersList
 import com.dendron.quizzer.presentation.question.components.ErrorMessage
 import com.dendron.quizzer.presentation.question.components.HeaderSection
@@ -26,29 +21,16 @@ import com.dendron.quizzer.presentation.question.components.QuestionActions
 
 @Composable
 fun QuestionScreen(
-    navController: NavHostController, viewModel: QuestionViewModel = hiltViewModel()
+    state: QuestionState,
+    onEvent: (QuestionListEvent) -> Unit,
 ) {
-    val state = viewModel.state.collectAsStateWithLifecycle()
-    val answerState = viewModel.answer.collectAsStateWithLifecycle()
-    val errorState = viewModel.error.collectAsStateWithLifecycle()
-    val loadingState = viewModel.loading.collectAsStateWithLifecycle()
-    val gameEnded = viewModel.gameEnded.collectAsStateWithLifecycle()
-    val answerResultState = viewModel.answerResult.collectAsStateWithLifecycle()
-    val value = state.value
-
-    if (gameEnded.value) {
-        LaunchedEffect(gameEnded) {
-            navController.navigate(Screen.SCORE.route + "/${value.score}") {
-                popUpTo(Screen.QUESTION.route) { inclusive = true }
-            }
-        }
-    }
+    val isLoading = state.isLoading
 
     MainLayout(
         bottomBar = {
-            AnimatedVisibility(visible = !loadingState.value) {
-                QuestionActions() {
-                    viewModel.nextQuestion()
+            AnimatedVisibility(visible = !isLoading) {
+                QuestionActions {
+                    onEvent(QuestionListEvent.NextQuestion)
                 }
             }
         }) {
@@ -56,32 +38,32 @@ fun QuestionScreen(
             modifier = Modifier
                 .fillMaxSize()
         ) {
-            AnimatedVisibility(visible = !loadingState.value) {
+            AnimatedVisibility(visible = !isLoading) {
                 Column(
                     modifier = Modifier
                         .padding(30.dp)
                 ) {
                     HeaderSection(
-                        text = value.question.parseAsHtml().toString(),
-                        questionCount = value.questionCount,
-                        questionNumber = value.questionNumber
+                        text = state.question.parseAsHtml().toString(),
+                        questionCount = state.questionCount,
+                        questionNumber = state.questionNumber
                     )
                     VerticalSpace()
                     AnswersList(
-                        answers = value.answers,
-                        answerSelected = answerState.value,
-                        showCorrect = answerResultState.value != AnswerResult.None
+                        answers = state.answers,
+                        answerSelected = state.answer,
+                        showCorrect = (state.answerResult != AnswerResult.None)
                     ) { selected ->
-                        viewModel.setAnswer(selected)
+                        onEvent(QuestionListEvent.SetAnswer(answer = selected))
                     }
                 }
             }
-            if (errorState.value.isNotEmpty()) {
+            if (state.error.isNotEmpty()) {
                 ErrorMessage(
-                    errorState.value, color = MaterialTheme.colorScheme.secondary
+                    state.error, color = MaterialTheme.colorScheme.secondary
                 )
             }
-            if (loadingState.value) {
+            if (state.isLoading) {
                 Box(modifier = Modifier.fillMaxSize()) {
                     CircularProgressIndicator(
                         modifier = Modifier.align(Alignment.Center)
