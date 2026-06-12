@@ -78,6 +78,7 @@ dependencies {
     // testing
     implementation(libs.junit)
     androidTestImplementation(libs.bundles.androidx.test)
+    androidTestImplementation(libs.androidx.compose.ui.test.junit)
     androidTestImplementation(platform(libs.androidx.compose.bom))
 
     // Mocks

@@ -15,6 +15,12 @@
     <string name="how_many_questions">How many questions?</string>
     <string name="which_difficulty">Which difficulty?</string>
     <string name="which_category">Which category?</string>
+    <string name="question_count_helper">Choose between 1 and 20 questions.</string>
+    <string name="question_count_slider_description">Question count slider</string>
+    <string name="question_count_value_description">%1$d questions selected</string>
+    <string name="quiz_setup_summary_title">Quiz setup summary</string>
+    <string name="quiz_setup_summary_value">%1$d questions · %2$s difficulty · %3$s category</string>
+    <string name="quiz_setup_summary_helper">These settings will be used for the next game after you save.</string>
     <string name="please_select_an_answer">Please, select an answer.</string>
     <string name="no_questions_matching_filters">No questions matched your current settings. Try different filters.</string>
     <string name="correct_feedback">Correct! Great job.</string>
