@@ -1,5 +1,6 @@
 package com.dendron.quizzer.presentation.question
 
+import android.util.Patterns
 import androidx.core.text.parseAsHtml
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
