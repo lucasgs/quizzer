@@ -7,11 +7,10 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
-import com.dendron.quizzer.R
 
 @Composable
 fun QuestionActions(
+    text: String,
     modifier: Modifier = Modifier,
     onClick: () -> Unit
 ) {
@@ -23,7 +22,7 @@ fun QuestionActions(
         Button(
             onClick = onClick
         ) {
-            Text(stringResource(R.string.next))
+            Text(text)
         }
     }
 }

@@ -2,6 +2,13 @@ package com.dendron.quizzer.presentation.question
 
 data class QuestionResult(val text: String, val isCorrect: Boolean)
 
+sealed interface QuestionUiError {
+    data object None : QuestionUiError
+    data object NoAnswerSelected : QuestionUiError
+    data object EmptyQuestions : QuestionUiError
+    data class LoadingFailed(val message: String) : QuestionUiError
+}
+
 data class QuestionState(
     val question: String = "",
     val questionNumber: String = "",
@@ -14,5 +21,5 @@ data class QuestionState(
     val answerResult: AnswerResult = AnswerResult.None,
     val answer: String = "",
     val isLoading: Boolean = false,
-    val error: String = "",
+    val error: QuestionUiError = QuestionUiError.None,
 )

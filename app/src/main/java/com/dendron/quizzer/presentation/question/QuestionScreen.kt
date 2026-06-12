@@ -5,8 +5,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -25,11 +27,18 @@ fun QuestionScreen(
     onEvent: (QuestionListEvent) -> Unit,
 ) {
     val isLoading = state.isLoading
+    val errorMessage = when (val error = state.error) {
+        QuestionUiError.None -> null
+        QuestionUiError.NoAnswerSelected -> "Please, select an answer."
+        QuestionUiError.EmptyQuestions -> "No questions matched your current settings. Try different filters."
+        is QuestionUiError.LoadingFailed -> error.message
+    }
+    val showRetry = state.error is QuestionUiError.EmptyQuestions || state.error is QuestionUiError.LoadingFailed
 
     MainLayout(
         bottomBar = {
-            AnimatedVisibility(visible = !isLoading) {
-                QuestionActions {
+            AnimatedVisibility(visible = !isLoading && state.question.isNotEmpty()) {
+                QuestionActions(text = "Next") {
                     onEvent(QuestionListEvent.NextQuestion)
                 }
             }
@@ -58,10 +67,22 @@ fun QuestionScreen(
                     }
                 }
             }
-            if (state.error.isNotEmpty()) {
+            if (errorMessage != null) {
                 ErrorMessage(
-                    state.error, color = MaterialTheme.colorScheme.secondary
+                    errorMessage, color = MaterialTheme.colorScheme.secondary
                 )
+                if (showRetry) {
+                    Box(
+                        modifier = Modifier.fillMaxSize()
+                    ) {
+                        Button(
+                            onClick = { onEvent(QuestionListEvent.RetryLoad) },
+                            modifier = Modifier.align(Alignment.TopCenter)
+                        ) {
+                            Text("Retry")
+                        }
+                    }
+                }
             }
             if (state.isLoading) {
                 Box(modifier = Modifier.fillMaxSize()) {

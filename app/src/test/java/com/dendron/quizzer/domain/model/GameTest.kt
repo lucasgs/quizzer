@@ -115,7 +115,7 @@ class GameTest {
     }
 
     @Test
-    fun `nextQuestion should change the status to ENDED when game is ended`(){
+    fun `nextQuestion should change the status to ENDED when game is ended`() {
         val answer1 = questionList.first().correctAnswer
         val answer2 = questionList[1].correctAnswer
 
@@ -127,10 +127,22 @@ class GameTest {
         game.checkAnswer(answer2)
         game.nextQuestion()
 
-
         assert(game.getScore() == expectedScore)
         assert(game.getStatus() == expectedStatus)
+    }
 
+    @Test
+    fun `start should reset ended game back to playing`() {
+        game.checkAnswer(questionList.first().correctAnswer)
+        game.nextQuestion()
+        game.checkAnswer(questionList[1].correctAnswer)
+        game.nextQuestion()
+
+        game.start(questionList)
+
+        assert(game.getStatus() == Status.PLAYING)
+        assert(game.getQuestionNumber() == 1)
+        assert(game.getScore() == 0)
     }
 }
 

@@ -1,14 +1,14 @@
 package com.dendron.quizzer.presentation.question
 
-import android.util.Patterns
-import androidx.core.text.parseAsHtml
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dendron.quizzer.common.Resource
 import com.dendron.quizzer.domain.model.Game
 import com.dendron.quizzer.domain.repository.SettingsRepository
 import com.dendron.quizzer.domain.repository.TriviaRepository
+import com.dendron.quizzer.remote.OpenTriviaDbRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
@@ -27,6 +27,7 @@ class QuestionViewModel @Inject constructor(
 
     private val _state = MutableStateFlow(QuestionState())
     val state = _state.asStateFlow()
+    private var fetchJob: Job? = null
 
     init {
         fetchQuestionList()
@@ -35,12 +36,14 @@ class QuestionViewModel @Inject constructor(
     fun onEvent(event: QuestionListEvent) {
         when (event) {
             QuestionListEvent.NextQuestion -> nextQuestion()
+            QuestionListEvent.RetryLoad -> fetchQuestionList()
             is QuestionListEvent.SetAnswer -> setAnswer(event.answer)
         }
     }
 
     private fun fetchQuestionList() {
-        viewModelScope.launch {
+        fetchJob?.cancel()
+        fetchJob = viewModelScope.launch {
             val settings = settingsRepository.getSettings().first()
             questionRepository.getQuestions(
                 numberOfQuestions = settings.questionCount,
@@ -52,7 +55,9 @@ class QuestionViewModel @Inject constructor(
                         _state.update { currentState ->
                             currentState.copy(
                                 isLoading = false,
-                                error = resource.message.orEmpty()
+                                question = "",
+                                answers = emptyList(),
+                                error = resource.message.toUiError()
                             )
                         }
                     }
@@ -61,17 +66,28 @@ class QuestionViewModel @Inject constructor(
                         _state.update { currentState ->
                             currentState.copy(
                                 isLoading = true,
-                                error = ""
+                                error = QuestionUiError.None
                             )
                         }
                     }
 
                     is Resource.Success -> {
-                        game.start(resource.data)
-                        updateGameState()
+                        if (resource.data.isEmpty()) {
+                            _state.update { currentState ->
+                                currentState.copy(
+                                    isLoading = false,
+                                    question = "",
+                                    answers = emptyList(),
+                                    error = QuestionUiError.EmptyQuestions
+                                )
+                            }
+                        } else {
+                            game.start(resource.data)
+                            updateGameState()
+                        }
                     }
                 }
-            }.launchIn(viewModelScope)
+            }.launchIn(this)
         }
     }
 
@@ -80,10 +96,10 @@ class QuestionViewModel @Inject constructor(
         val answers = (question.incorrectAnswer + question.correctAnswer).shuffled()
         _state.update { questionState ->
             questionState.copy(
-                question = question.text.parseAsHtml().toString(),
+                question = question.text,
                 answers = answers.map { answer ->
                     QuestionResult(
-                        text = answer.parseAsHtml().toString(),
+                        text = answer,
                         isCorrect = (answer == question.correctAnswer)
                     )
                 },
@@ -94,7 +110,7 @@ class QuestionViewModel @Inject constructor(
                 answer = "",
                 gameEnded = game.isGameEnded(),
                 isLoading = false,
-                error = "",
+                error = QuestionUiError.None,
             )
         }
     }
@@ -102,7 +118,7 @@ class QuestionViewModel @Inject constructor(
     private fun nextQuestion() {
         val currentAnswer = state.value.answer
         if (currentAnswer.isEmpty()) {
-            _state.update { currentState -> currentState.copy(error = "Please, select an answer.") }
+            _state.update { currentState -> currentState.copy(error = QuestionUiError.NoAnswerSelected) }
         } else {
             game.nextQuestion()
             updateGameState()
@@ -115,6 +131,7 @@ class QuestionViewModel @Inject constructor(
             _state.update { currentState ->
                 currentState.copy(
                     answer = answer,
+                    error = QuestionUiError.None,
                     answerResult = if (game.checkAnswer(answer)) {
                         AnswerResult.Correct(
                             message = "Nice :)"
@@ -129,5 +146,11 @@ class QuestionViewModel @Inject constructor(
                 )
             }
         }
+    }
+
+    private fun String?.toUiError(): QuestionUiError = when (this) {
+        OpenTriviaDbRepository.NO_RESULTS_MESSAGE -> QuestionUiError.EmptyQuestions
+        null, "" -> QuestionUiError.LoadingFailed(OpenTriviaDbRepository.NETWORK_ERROR_MESSAGE)
+        else -> QuestionUiError.LoadingFailed(this)
     }
 }

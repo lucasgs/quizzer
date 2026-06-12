@@ -61,15 +61,58 @@ class OpenTriviaDbRepositoryTest {
     }
 
     @Test
-    fun `getQuestions should emit Loading and Error when is error`() = runTest {
-
+    fun `getQuestions should emit Loading and Error when request fails`() = runTest {
         val errorMessage = "error"
         val expectedLoading = Resource.Loading<List<Question>>()
         val expectedError = Resource.Error<List<Question>>(errorMessage)
 
-        whenever(api.getQuestions()).thenAnswer {
-            Exception(errorMessage)
+        whenever(api.getQuestions()).thenThrow(RuntimeException(errorMessage))
+
+        repository.getQuestions(
+            numberOfQuestions = questionNumber,
+            difficulty = difficulty,
+            category = category
+        ).test {
+            assertEquals(expectedLoading, awaitItem())
+            assertEquals(expectedError, awaitItem())
+            awaitComplete()
         }
+    }
+
+    @Test
+    fun `getQuestions should emit error when api returns no results`() = runTest {
+        val expectedLoading = Resource.Loading<List<Question>>()
+        val expectedError = Resource.Error<List<Question>>(OpenTriviaDbRepository.NO_RESULTS_MESSAGE)
+
+        whenever(api.getQuestions()).thenReturn(
+            Trivia(
+                responseCode = 1,
+                results = emptyList()
+            )
+        )
+
+        repository.getQuestions(
+            numberOfQuestions = questionNumber,
+            difficulty = difficulty,
+            category = category
+        ).test {
+            assertEquals(expectedLoading, awaitItem())
+            assertEquals(expectedError, awaitItem())
+            awaitComplete()
+        }
+    }
+
+    @Test
+    fun `getQuestions should emit error when success response has empty questions`() = runTest {
+        val expectedLoading = Resource.Loading<List<Question>>()
+        val expectedError = Resource.Error<List<Question>>(OpenTriviaDbRepository.NO_RESULTS_MESSAGE)
+
+        whenever(api.getQuestions()).thenReturn(
+            Trivia(
+                responseCode = 0,
+                results = emptyList()
+            )
+        )
 
         repository.getQuestions(
             numberOfQuestions = questionNumber,

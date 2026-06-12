@@ -19,7 +19,10 @@ class Game @Inject constructor() {
         questionList.addAll(questions)
         questionNumber = 0
         score = 0
+        status = Status.PLAYING
     }
+
+    fun hasQuestions() = questionList.isNotEmpty()
 
     fun getCurrentQuestion() = questionList[questionNumber]
 

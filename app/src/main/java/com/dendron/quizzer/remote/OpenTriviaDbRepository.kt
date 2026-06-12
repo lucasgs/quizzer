@@ -20,17 +20,44 @@ class OpenTriviaDbRepository @Inject constructor(private val api: OpenTriviaDbAp
         flow {
             try {
                 emit(Resource.Loading())
-                val questions =
-                    api.getQuestions(
-                        amount = numberOfQuestions,
-                        difficulty = difficulty.toDataModel(),
-                        category = category.toDataModel()
-                    ).results.map { it.toModel() }
-                emit(Resource.Success(questions))
+                val response = api.getQuestions(
+                    amount = numberOfQuestions,
+                    difficulty = difficulty.toDataModel(),
+                    category = category.toDataModel()
+                )
+
+                when (response.responseCode) {
+                    RESPONSE_SUCCESS -> {
+                        val questions = response.results.map { it.toModel() }
+                        if (questions.isEmpty()) {
+                            emit(Resource.Error(NO_RESULTS_MESSAGE))
+                        } else {
+                            emit(Resource.Success(questions))
+                        }
+                    }
+
+                    RESPONSE_NO_RESULTS -> emit(Resource.Error(NO_RESULTS_MESSAGE))
+                    RESPONSE_INVALID_PARAMETER,
+                    RESPONSE_TOKEN_NOT_FOUND,
+                    RESPONSE_TOKEN_EMPTY -> emit(Resource.Error(SERVICE_ERROR_MESSAGE))
+                    else -> emit(Resource.Error(SERVICE_ERROR_MESSAGE))
+                }
             } catch (e: Exception) {
-                emit(Resource.Error(e.localizedMessage))
+                emit(Resource.Error(e.localizedMessage ?: NETWORK_ERROR_MESSAGE))
             }
         }
+
+    companion object {
+        const val NO_RESULTS_MESSAGE = "No questions matched your current settings. Try different filters."
+        const val SERVICE_ERROR_MESSAGE = "The trivia service is temporarily unavailable. Please try again."
+        const val NETWORK_ERROR_MESSAGE = "We couldn't load questions. Please try again."
+
+        private const val RESPONSE_SUCCESS = 0
+        private const val RESPONSE_NO_RESULTS = 1
+        private const val RESPONSE_INVALID_PARAMETER = 2
+        private const val RESPONSE_TOKEN_NOT_FOUND = 3
+        private const val RESPONSE_TOKEN_EMPTY = 4
+    }
 }
 
 fun Difficulty.toDataModel(): String = when (this) {
