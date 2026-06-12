@@ -108,6 +108,45 @@ class QuestionViewModelTest {
     }
 
     @Test
+    fun `init should expose populated success state when repository succeeds`() = runTest {
+        val repository = FakeTriviaRepository(flowOf(Resource.Loading(), Resource.Success(questionList)))
+        val viewModel = QuestionViewModel(
+            fetchQuestionsUseCase = FetchQuestionsUseCase(repository),
+            evaluateAnswerUseCase = EvaluateAnswerUseCase(),
+            buildQuestionUiStateUseCase = BuildQuestionUiStateUseCase(),
+            settingsRepository = FakeSettingsRepository(),
+            game = Game()
+        )
+
+        advanceUntilIdle()
+
+        assertEquals("question 1", viewModel.state.value.question)
+        assertEquals("1", viewModel.state.value.questionNumber)
+        assertEquals("1", viewModel.state.value.questionCount)
+        assertEquals("category", viewModel.state.value.category)
+        assertEquals("Easy", viewModel.state.value.difficulty)
+        assertEquals(QuestionUiError.None, viewModel.state.value.error)
+    }
+
+    @Test
+    fun `next question without selecting answer should expose selection error`() = runTest {
+        val repository = FakeTriviaRepository(flowOf(Resource.Loading(), Resource.Success(questionList)))
+        val viewModel = QuestionViewModel(
+            fetchQuestionsUseCase = FetchQuestionsUseCase(repository),
+            evaluateAnswerUseCase = EvaluateAnswerUseCase(),
+            buildQuestionUiStateUseCase = BuildQuestionUiStateUseCase(),
+            settingsRepository = FakeSettingsRepository(),
+            game = Game()
+        )
+
+        advanceUntilIdle()
+        viewModel.onEvent(QuestionListEvent.NextQuestion)
+
+        assertEquals(QuestionUiError.NoAnswerSelected, viewModel.state.value.error)
+        assertEquals(AnswerResult.None, viewModel.state.value.answerResult)
+    }
+
+    @Test
     fun `last question should mark game ended after checked answer`() = runTest {
         val repository = FakeTriviaRepository(flowOf(Resource.Loading(), Resource.Success(questionList)))
         val viewModel = QuestionViewModel(
@@ -125,6 +164,26 @@ class QuestionViewModelTest {
 
         viewModel.onEvent(QuestionListEvent.NextQuestion)
         assertTrue(viewModel.state.value.gameEnded)
+    }
+
+    @Test
+    fun `set answer after evaluation should not overwrite checked answer`() = runTest {
+        val repository = FakeTriviaRepository(flowOf(Resource.Loading(), Resource.Success(questionList)))
+        val viewModel = QuestionViewModel(
+            fetchQuestionsUseCase = FetchQuestionsUseCase(repository),
+            evaluateAnswerUseCase = EvaluateAnswerUseCase(),
+            buildQuestionUiStateUseCase = BuildQuestionUiStateUseCase(),
+            settingsRepository = FakeSettingsRepository(),
+            game = Game()
+        )
+
+        advanceUntilIdle()
+        viewModel.onEvent(QuestionListEvent.SetAnswer("A"))
+        viewModel.onEvent(QuestionListEvent.NextQuestion)
+        viewModel.onEvent(QuestionListEvent.SetAnswer("B"))
+
+        assertEquals("A", viewModel.state.value.answer)
+        assertEquals(AnswerResult.Correct("Correct! Great job."), viewModel.state.value.answerResult)
     }
 
     private class FakeSettingsRepository : SettingsRepository {
