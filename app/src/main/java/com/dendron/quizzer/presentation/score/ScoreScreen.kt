@@ -19,6 +19,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
@@ -39,21 +40,31 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @Composable
-fun ScoreSection(score: String, modifier: Modifier = Modifier) {
+fun ScoreSection(score: String, questionCount: String, modifier: Modifier = Modifier) {
+    val scoreValue = score.toIntOrNull() ?: 0
+    val questionCountValue = questionCount.toIntOrNull() ?: 0
+    val correctAnswers = if (questionCountValue == 0) 0 else scoreValue / 100
+    val percentage = if (questionCountValue == 0) 0 else ((correctAnswers * 100f) / questionCountValue).toInt()
+    val performanceMessage = when {
+        percentage >= 90 -> stringResource(R.string.score_message_excellent)
+        percentage >= 70 -> stringResource(R.string.score_message_great)
+        percentage >= 40 -> stringResource(R.string.score_message_good)
+        else -> stringResource(R.string.score_message_try_again)
+    }
+
     Box(
         modifier = modifier.fillMaxSize()
     ) {
-
         Card(
             elevation = CardDefaults.elevatedCardElevation(defaultElevation = 4.dp),
             modifier = modifier
-                .size(250.dp, 250.dp)
+                .padding(24.dp)
                 .align(Alignment.Center)
         ) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center,
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier.padding(24.dp)
             ) {
                 Text(
                     text = stringResource(R.string.score),
@@ -67,6 +78,17 @@ fun ScoreSection(score: String, modifier: Modifier = Modifier) {
                     color = MaterialTheme.colorScheme.primary,
                     fontStyle = FontStyle.Italic,
                     fontWeight = FontWeight.Bold,
+                )
+                VerticalSpace()
+                Text(
+                    text = stringResource(R.string.score_summary, correctAnswers, questionCountValue, percentage),
+                    style = MaterialTheme.typography.titleMedium,
+                )
+                VerticalSpace()
+                Text(
+                    text = performanceMessage,
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.secondary,
                 )
                 VerticalSpace()
                 BottomDecoration()
@@ -127,14 +149,14 @@ fun ActionSection(navController: NavHostController?, coroutineScope: CoroutineSc
     Row(
         horizontalArrangement = Arrangement.SpaceAround, modifier = Modifier.fillMaxWidth()
     ) {
-        Button(onClick = {
+        OutlinedButton(onClick = {
             coroutineScope.launch {
                 navController?.navigate(Screen.HOME.route) {
                     popUpTo(Screen.HOME.route)
                 }
             }
         }) {
-            Text(stringResource(R.string.close))
+            Text(stringResource(R.string.home))
         }
         Button(onClick = {
             coroutineScope.launch {
@@ -150,13 +172,14 @@ fun ActionSection(navController: NavHostController?, coroutineScope: CoroutineSc
 }
 
 @Composable
-fun ScoreScreen(navController: NavHostController?, score: String) {
+fun ScoreScreen(navController: NavHostController?, score: String, questionCount: String) {
     val coroutineScope = rememberCoroutineScope()
     MainLayout(showBackground = true, bottomBar = {
         ActionSection(navController = navController, coroutineScope = coroutineScope)
     }) {
         ScoreSection(
             score = score,
+            questionCount = questionCount,
         )
     }
 }
@@ -164,5 +187,5 @@ fun ScoreScreen(navController: NavHostController?, score: String) {
 @Preview
 @Composable
 fun ScoreScreenPreview() {
-    ScoreScreen(navController = null, score = "5")
+    ScoreScreen(navController = null, score = "500", questionCount = "10")
 }

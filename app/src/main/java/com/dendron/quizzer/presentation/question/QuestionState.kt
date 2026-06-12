@@ -17,6 +17,8 @@ data class QuestionState(
     val score: String = "",
     val answers: List<QuestionResult> = emptyList(),
     val answerCorrect: String = "",
+    val category: String = "",
+    val difficulty: String = "",
     val gameEnded: Boolean = false,
     val answerResult: AnswerResult = AnswerResult.None,
     val answer: String = "",

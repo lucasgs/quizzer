@@ -1,7 +1,7 @@
 package com.dendron.quizzer.presentation.question
 
 sealed class AnswerResult {
-    class Correct(val message: String): AnswerResult()
-    class Incorrect(val message: String): AnswerResult()
-    object None : AnswerResult()
+    data class Correct(val message: String) : AnswerResult()
+    data class Incorrect(val message: String) : AnswerResult()
+    data object None : AnswerResult()
 }

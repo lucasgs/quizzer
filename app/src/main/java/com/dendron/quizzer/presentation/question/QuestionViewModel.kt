@@ -57,6 +57,8 @@ class QuestionViewModel @Inject constructor(
                                 isLoading = false,
                                 question = "",
                                 answers = emptyList(),
+                                answer = "",
+                                answerResult = AnswerResult.None,
                                 error = resource.message.toUiError()
                             )
                         }
@@ -66,7 +68,8 @@ class QuestionViewModel @Inject constructor(
                         _state.update { currentState ->
                             currentState.copy(
                                 isLoading = true,
-                                error = QuestionUiError.None
+                                error = QuestionUiError.None,
+                                answerResult = AnswerResult.None
                             )
                         }
                     }
@@ -78,6 +81,8 @@ class QuestionViewModel @Inject constructor(
                                     isLoading = false,
                                     question = "",
                                     answers = emptyList(),
+                                    answer = "",
+                                    answerResult = AnswerResult.None,
                                     error = QuestionUiError.EmptyQuestions
                                 )
                             }
@@ -108,6 +113,8 @@ class QuestionViewModel @Inject constructor(
                 questionNumber = game.getQuestionNumber().toString(),
                 answerResult = AnswerResult.None,
                 answer = "",
+                category = question.category,
+                difficulty = question.difficulty.name.lowercase().replaceFirstChar(Char::titlecase),
                 gameEnded = game.isGameEnded(),
                 isLoading = false,
                 error = QuestionUiError.None,
@@ -116,9 +123,15 @@ class QuestionViewModel @Inject constructor(
     }
 
     private fun nextQuestion() {
-        val currentAnswer = state.value.answer
+        val currentState = state.value
+        val currentAnswer = currentState.answer
         if (currentAnswer.isEmpty()) {
-            _state.update { currentState -> currentState.copy(error = QuestionUiError.NoAnswerSelected) }
+            _state.update { it.copy(error = QuestionUiError.NoAnswerSelected) }
+            return
+        }
+
+        if (currentState.answerResult == AnswerResult.None) {
+            checkAnswer(currentAnswer)
         } else {
             game.nextQuestion()
             updateGameState()
@@ -126,25 +139,28 @@ class QuestionViewModel @Inject constructor(
     }
 
     private fun setAnswer(answer: String) {
-        val answerResult = state.value.answerResult
-        if (answerResult == AnswerResult.None) {
+        if (state.value.answerResult == AnswerResult.None) {
             _state.update { currentState ->
                 currentState.copy(
                     answer = answer,
                     error = QuestionUiError.None,
-                    answerResult = if (game.checkAnswer(answer)) {
-                        AnswerResult.Correct(
-                            message = "Nice :)"
-                        )
-                    } else {
-                        AnswerResult.Incorrect(buildString {
-                            append("The correct was: '")
-                            append(game.getCurrentCorrectAnswer())
-                            append("'")
-                        })
-                    }
                 )
             }
+        }
+    }
+
+    private fun checkAnswer(answer: String) {
+        val correctAnswer = game.getCurrentCorrectAnswer()
+        val isCorrect = game.checkAnswer(answer)
+        _state.update { currentState ->
+            currentState.copy(
+                error = QuestionUiError.None,
+                answerResult = if (isCorrect) {
+                    AnswerResult.Correct("Correct! Great job.")
+                } else {
+                    AnswerResult.Incorrect("Incorrect. The right answer is $correctAnswer")
+                }
+            )
         }
     }
 

@@ -29,7 +29,9 @@ fun NavigationGraph(navController: NavHostController) {
             val state = viewModel.state.collectAsStateWithLifecycle()
             if (state.value.gameEnded) {
                 LaunchedEffect(Unit) {
-                    navController.navigate(Screen.SCORE.route + "/${state.value.score}") {
+                    navController.navigate(
+                        Screen.SCORE.route + "/${state.value.score}/${state.value.questionCount}"
+                    ) {
                         popUpTo(Screen.QUESTION.route) { inclusive = true }
                     }
                 }
@@ -38,10 +40,11 @@ fun NavigationGraph(navController: NavHostController) {
             }
         }
 
-        composable(route = Screen.SCORE.route + "/{score}") { navBackStackEntry ->
+        composable(route = Screen.SCORE.route + "/{score}/{questionCount}") { navBackStackEntry ->
             ScoreScreen(
                 navController = navController,
-                score = navBackStackEntry.arguments?.getString("score").toString()
+                score = navBackStackEntry.arguments?.getString("score").toString(),
+                questionCount = navBackStackEntry.arguments?.getString("questionCount").toString()
             )
         }
 

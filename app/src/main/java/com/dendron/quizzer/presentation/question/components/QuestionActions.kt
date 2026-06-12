@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 @Composable
 fun QuestionActions(
     text: String,
+    enabled: Boolean,
     modifier: Modifier = Modifier,
     onClick: () -> Unit
 ) {
@@ -20,7 +21,8 @@ fun QuestionActions(
             .fillMaxWidth()
     ) {
         Button(
-            onClick = onClick
+            onClick = onClick,
+            enabled = enabled
         ) {
             Text(text)
         }

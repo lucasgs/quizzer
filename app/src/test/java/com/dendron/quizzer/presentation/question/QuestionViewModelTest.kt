@@ -10,9 +10,9 @@ import com.dendron.quizzer.domain.model.Settings
 import com.dendron.quizzer.domain.model.Type
 import com.dendron.quizzer.domain.repository.SettingsRepository
 import com.dendron.quizzer.domain.repository.TriviaRepository
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
@@ -20,6 +20,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class QuestionViewModelTest {
 
     @get:Rule
@@ -74,6 +75,43 @@ class QuestionViewModelTest {
         assertEquals("1", viewModel.state.value.questionNumber)
     }
 
+    @Test
+    fun `next question should check answer before advancing`() = runTest {
+        val viewModel = QuestionViewModel(
+            questionRepository = FakeTriviaRepository(flowOf(Resource.Loading(), Resource.Success(twoQuestionList))),
+            settingsRepository = FakeSettingsRepository(),
+            game = Game()
+        )
+
+        advanceUntilIdle()
+        viewModel.onEvent(QuestionListEvent.SetAnswer("A"))
+        viewModel.onEvent(QuestionListEvent.NextQuestion)
+
+        assertEquals("1", viewModel.state.value.questionNumber)
+        assertEquals(AnswerResult.Correct("Correct! Great job."), viewModel.state.value.answerResult)
+
+        viewModel.onEvent(QuestionListEvent.NextQuestion)
+        assertEquals("2", viewModel.state.value.questionNumber)
+        assertEquals(AnswerResult.None, viewModel.state.value.answerResult)
+    }
+
+    @Test
+    fun `last question should mark game ended after checked answer`() = runTest {
+        val viewModel = QuestionViewModel(
+            questionRepository = FakeTriviaRepository(flowOf(Resource.Loading(), Resource.Success(questionList))),
+            settingsRepository = FakeSettingsRepository(),
+            game = Game()
+        )
+
+        advanceUntilIdle()
+        viewModel.onEvent(QuestionListEvent.SetAnswer("A"))
+        viewModel.onEvent(QuestionListEvent.NextQuestion)
+        assertEquals(AnswerResult.Correct("Correct! Great job."), viewModel.state.value.answerResult)
+
+        viewModel.onEvent(QuestionListEvent.NextQuestion)
+        assertTrue(viewModel.state.value.gameEnded)
+    }
+
     private class FakeSettingsRepository : SettingsRepository {
         override fun getSettings(): Flow<Settings> = flowOf(Settings(10, Difficulty.Any, Category.Any))
 
@@ -111,6 +149,18 @@ class QuestionViewModelTest {
                 text = "question 1",
                 correctAnswer = "A",
                 incorrectAnswer = listOf("B", "C", "D")
+            )
+        )
+
+        private val twoQuestionList = listOf(
+            questionList.first(),
+            Question(
+                category = "category",
+                type = Type.MultipleChoice,
+                difficulty = Difficulty.Medium,
+                text = "question 2",
+                correctAnswer = "B",
+                incorrectAnswer = listOf("A", "C", "D")
             )
         )
     }

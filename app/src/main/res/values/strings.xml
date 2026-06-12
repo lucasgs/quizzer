@@ -3,12 +3,25 @@
     <string name="start">Start</string>
     <string name="score">Score</string>
     <string name="close">Close</string>
+    <string name="home">Home</string>
     <string name="play_again">Play again</string>
     <string name="save">Save</string>
-    <string name="next">Next</string>
+    <string name="next_question">Next question</string>
+    <string name="check_answer">Check answer</string>
+    <string name="finish">Finish</string>
+    <string name="retry">Retry</string>
     <string name="question">Question %s</string>
     <string name="settings">Settings</string>
     <string name="how_many_questions">How many questions?</string>
     <string name="which_difficulty">Which difficulty?</string>
     <string name="which_category">Which category?</string>
+    <string name="please_select_an_answer">Please, select an answer.</string>
+    <string name="no_questions_matching_filters">No questions matched your current settings. Try different filters.</string>
+    <string name="correct_feedback">Correct! Great job.</string>
+    <string name="incorrect_feedback">Incorrect. The right answer is %s</string>
+    <string name="score_summary">%1$d of %2$d correct · %3$d%%</string>
+    <string name="score_message_excellent">Excellent run — you really know your trivia.</string>
+    <string name="score_message_great">Great job — you were on a roll.</string>
+    <string name="score_message_good">Nice work — keep going to improve your score.</string>
+    <string name="score_message_try_again">Good effort — play again and beat your score.</string>
 </resources>
