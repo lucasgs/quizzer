@@ -1,7 +1,5 @@
-package com.dendron.quizzer.data.model
+package com.dendron.quizzer.remote.model
 
-
-import com.dendron.quizzer.remote.model.Result
 import com.google.gson.annotations.SerializedName
 
 data class Trivia(

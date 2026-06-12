@@ -5,22 +5,25 @@ import androidx.lifecycle.viewModelScope
 import com.dendron.quizzer.common.Resource
 import com.dendron.quizzer.domain.model.Game
 import com.dendron.quizzer.domain.repository.SettingsRepository
-import com.dendron.quizzer.domain.repository.TriviaRepository
+import com.dendron.quizzer.domain.usecase.BuildQuestionUiStateUseCase
+import com.dendron.quizzer.domain.usecase.EvaluateAnswerUseCase
+import com.dendron.quizzer.domain.usecase.FetchQuestionsUseCase
 import com.dendron.quizzer.remote.OpenTriviaDbRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class QuestionViewModel @Inject constructor(
-    private val questionRepository: TriviaRepository,
+    private val fetchQuestionsUseCase: FetchQuestionsUseCase,
+    private val evaluateAnswerUseCase: EvaluateAnswerUseCase,
+    private val buildQuestionUiStateUseCase: BuildQuestionUiStateUseCase,
     private val settingsRepository: SettingsRepository,
     private var game: Game
 ) : ViewModel() {
@@ -45,11 +48,7 @@ class QuestionViewModel @Inject constructor(
         fetchJob?.cancel()
         fetchJob = viewModelScope.launch {
             val settings = settingsRepository.getSettings().first()
-            questionRepository.getQuestions(
-                numberOfQuestions = settings.questionCount,
-                difficulty = settings.difficulty,
-                category = settings.category,
-            ).onEach { resource ->
+            fetchQuestionsUseCase(settings).collectLatest { resource ->
                 when (resource) {
                     is Resource.Error -> {
                         _state.update { currentState ->
@@ -92,34 +91,12 @@ class QuestionViewModel @Inject constructor(
                         }
                     }
                 }
-            }.launchIn(this)
+            }
         }
     }
 
     private fun updateGameState() {
-        val question = game.getCurrentQuestion()
-        val answers = (question.incorrectAnswer + question.correctAnswer).shuffled()
-        _state.update { questionState ->
-            questionState.copy(
-                question = question.text,
-                answers = answers.map { answer ->
-                    QuestionResult(
-                        text = answer,
-                        isCorrect = (answer == question.correctAnswer)
-                    )
-                },
-                score = game.getScore().toString(),
-                questionCount = game.getQuestionCount().toString(),
-                questionNumber = game.getQuestionNumber().toString(),
-                answerResult = AnswerResult.None,
-                answer = "",
-                category = question.category,
-                difficulty = question.difficulty.name.lowercase().replaceFirstChar(Char::titlecase),
-                gameEnded = game.isGameEnded(),
-                isLoading = false,
-                error = QuestionUiError.None,
-            )
-        }
+        _state.value = buildQuestionUiStateUseCase(game)
     }
 
     private fun nextQuestion() {
@@ -155,11 +132,10 @@ class QuestionViewModel @Inject constructor(
         _state.update { currentState ->
             currentState.copy(
                 error = QuestionUiError.None,
-                answerResult = if (isCorrect) {
-                    AnswerResult.Correct("Correct! Great job.")
-                } else {
-                    AnswerResult.Incorrect("Incorrect. The right answer is $correctAnswer")
-                }
+                answerResult = evaluateAnswerUseCase(
+                    correctAnswer = correctAnswer,
+                    isCorrect = isCorrect,
+                )
             )
         }
     }

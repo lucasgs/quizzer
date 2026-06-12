@@ -7,7 +7,7 @@ import com.dendron.quizzer.domain.model.Question
 import kotlinx.coroutines.flow.Flow
 
 interface TriviaRepository {
-    suspend fun getQuestions(
+    fun getQuestions(
         numberOfQuestions: Int,
         difficulty: Difficulty,
         category: Category,

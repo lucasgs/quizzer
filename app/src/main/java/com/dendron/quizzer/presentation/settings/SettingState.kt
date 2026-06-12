@@ -1,8 +1,16 @@
 package com.dendron.quizzer.presentation.settings
 
+import com.dendron.quizzer.domain.model.Category
+import com.dendron.quizzer.domain.model.Difficulty
 import com.dendron.quizzer.domain.model.Settings
 
-sealed interface SettingState {
-    object Loading: SettingState
-    class Success(val data: Settings): SettingState
+data class SettingState(
+    val isLoading: Boolean = true,
+    val settings: Settings = Settings(),
+    val questionCount: Int = settings.questionCount,
+    val difficulty: Difficulty = settings.difficulty,
+    val category: Category = settings.category,
+) {
+    val hasChanges: Boolean
+        get() = settings != Settings(questionCount, difficulty, category)
 }

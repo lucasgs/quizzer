@@ -3,7 +3,7 @@ package com.dendron.quizzer.remote
 import app.cash.turbine.test
 import com.dendron.quizzer.MainDispatcherRule
 import com.dendron.quizzer.common.Resource
-import com.dendron.quizzer.data.model.Trivia
+import com.dendron.quizzer.remote.model.Trivia
 import com.dendron.quizzer.domain.model.Category
 import com.dendron.quizzer.domain.model.Difficulty
 import com.dendron.quizzer.domain.model.Question

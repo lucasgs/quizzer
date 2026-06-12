@@ -12,7 +12,7 @@ import javax.inject.Inject
 
 class OpenTriviaDbRepository @Inject constructor(private val api: OpenTriviaDbApi) :
     TriviaRepository {
-    override suspend fun getQuestions(
+    override fun getQuestions(
         numberOfQuestions: Int,
         difficulty: Difficulty,
         category: Category,

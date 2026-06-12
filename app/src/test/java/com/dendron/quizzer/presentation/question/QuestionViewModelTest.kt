@@ -10,6 +10,9 @@ import com.dendron.quizzer.domain.model.Settings
 import com.dendron.quizzer.domain.model.Type
 import com.dendron.quizzer.domain.repository.SettingsRepository
 import com.dendron.quizzer.domain.repository.TriviaRepository
+import com.dendron.quizzer.domain.usecase.BuildQuestionUiStateUseCase
+import com.dendron.quizzer.domain.usecase.EvaluateAnswerUseCase
+import com.dendron.quizzer.domain.usecase.FetchQuestionsUseCase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
@@ -28,13 +31,16 @@ class QuestionViewModelTest {
 
     @Test
     fun `init should expose empty state when repository returns no questions`() = runTest {
+        val repository = FakeTriviaRepository(
+            flowOf(
+                Resource.Loading(),
+                Resource.Success(emptyList())
+            )
+        )
         val viewModel = QuestionViewModel(
-            questionRepository = FakeTriviaRepository(
-                flowOf(
-                    Resource.Loading(),
-                    Resource.Success(emptyList())
-                )
-            ),
+            fetchQuestionsUseCase = FetchQuestionsUseCase(repository),
+            evaluateAnswerUseCase = EvaluateAnswerUseCase(),
+            buildQuestionUiStateUseCase = BuildQuestionUiStateUseCase(),
             settingsRepository = FakeSettingsRepository(),
             game = Game()
         )
@@ -47,19 +53,22 @@ class QuestionViewModelTest {
 
     @Test
     fun `retry should reload questions after initial error`() = runTest {
-        val viewModel = QuestionViewModel(
-            questionRepository = SequencedTriviaRepository(
-                listOf(
-                    flowOf(
-                        Resource.Loading(),
-                        Resource.Error("Network down")
-                    ),
-                    flowOf(
-                        Resource.Loading(),
-                        Resource.Success(questionList)
-                    )
+        val repository = SequencedTriviaRepository(
+            listOf(
+                flowOf(
+                    Resource.Loading(),
+                    Resource.Error("Network down")
+                ),
+                flowOf(
+                    Resource.Loading(),
+                    Resource.Success(questionList)
                 )
-            ),
+            )
+        )
+        val viewModel = QuestionViewModel(
+            fetchQuestionsUseCase = FetchQuestionsUseCase(repository),
+            evaluateAnswerUseCase = EvaluateAnswerUseCase(),
+            buildQuestionUiStateUseCase = BuildQuestionUiStateUseCase(),
             settingsRepository = FakeSettingsRepository(),
             game = Game()
         )
@@ -77,8 +86,11 @@ class QuestionViewModelTest {
 
     @Test
     fun `next question should check answer before advancing`() = runTest {
+        val repository = FakeTriviaRepository(flowOf(Resource.Loading(), Resource.Success(twoQuestionList)))
         val viewModel = QuestionViewModel(
-            questionRepository = FakeTriviaRepository(flowOf(Resource.Loading(), Resource.Success(twoQuestionList))),
+            fetchQuestionsUseCase = FetchQuestionsUseCase(repository),
+            evaluateAnswerUseCase = EvaluateAnswerUseCase(),
+            buildQuestionUiStateUseCase = BuildQuestionUiStateUseCase(),
             settingsRepository = FakeSettingsRepository(),
             game = Game()
         )
@@ -97,8 +109,11 @@ class QuestionViewModelTest {
 
     @Test
     fun `last question should mark game ended after checked answer`() = runTest {
+        val repository = FakeTriviaRepository(flowOf(Resource.Loading(), Resource.Success(questionList)))
         val viewModel = QuestionViewModel(
-            questionRepository = FakeTriviaRepository(flowOf(Resource.Loading(), Resource.Success(questionList))),
+            fetchQuestionsUseCase = FetchQuestionsUseCase(repository),
+            evaluateAnswerUseCase = EvaluateAnswerUseCase(),
+            buildQuestionUiStateUseCase = BuildQuestionUiStateUseCase(),
             settingsRepository = FakeSettingsRepository(),
             game = Game()
         )
@@ -121,7 +136,7 @@ class QuestionViewModelTest {
     private class FakeTriviaRepository(
         private val flow: Flow<Resource<List<Question>>>
     ) : TriviaRepository {
-        override suspend fun getQuestions(
+        override fun getQuestions(
             numberOfQuestions: Int,
             difficulty: Difficulty,
             category: Category
@@ -133,7 +148,7 @@ class QuestionViewModelTest {
     ) : TriviaRepository {
         private var index = 0
 
-        override suspend fun getQuestions(
+        override fun getQuestions(
             numberOfQuestions: Int,
             difficulty: Difficulty,
             category: Category

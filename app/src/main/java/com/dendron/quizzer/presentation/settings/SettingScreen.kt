@@ -49,40 +49,33 @@ fun SettingScreen(navController: NavHostController, viewModel: SettingViewModel 
         }
     }
 
-    when (val settingState = state.value) {
-        is SettingState.Loading -> Unit
-        is SettingState.Success -> {
+    val uiState = state.value
 
-            val settings = settingState.data
-
-            var questionCount by remember { mutableStateOf(settings.questionCount) }
-            var difficulty by remember { mutableStateOf(settings.difficulty) }
-            var category by remember { mutableStateOf(settings.category) }
-
-            MainLayout(showBackground = false, bottomBar = {
-                SettingActionSection(onBack = {
+    if (!uiState.isLoading) {
+        MainLayout(showBackground = false, bottomBar = {
+            SettingActionSection(
+                canSave = uiState.hasChanges,
+                onBack = { navigateToHomeScreen() },
+                onSave = {
+                    viewModel.onSaveSettings()
                     navigateToHomeScreen()
-                }, onSave = {
-                    viewModel.onSaveSettings(
-                        questionCount = questionCount, difficulty = difficulty, category = category
-                    )
-                    navigateToHomeScreen()
-                })
-            }) {
-                Column(
-                    verticalArrangement = Arrangement.Top, modifier = Modifier
-                        .fillMaxSize()
-                        .padding(10.dp)
-                ) {
-                    QuestionCountSection(questionCount = questionCount.toFloat()) { newValue ->
-                        questionCount = newValue.toInt()
-                    }
-                    DifficultySection(difficulty = difficulty) { newValue ->
-                        difficulty = newValue
-                    }
-                    CategorySection(category = category) { newValue ->
-                        category = newValue
-                    }
+                }
+            )
+        }) {
+            Column(
+                verticalArrangement = Arrangement.Top,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(10.dp)
+            ) {
+                QuestionCountSection(questionCount = uiState.questionCount.toFloat()) { newValue ->
+                    viewModel.onQuestionCountChanged(newValue.toInt())
+                }
+                DifficultySection(difficulty = uiState.difficulty) { newValue ->
+                    viewModel.onDifficultyChanged(newValue)
+                }
+                CategorySection(category = uiState.category) { newValue ->
+                    viewModel.onCategoryChanged(newValue)
                 }
             }
         }
@@ -116,7 +109,6 @@ fun QuestionCountSection(questionCount: Float, onValueChange: (Float) -> Unit) {
 @Composable
 fun DifficultySection(difficulty: Difficulty, onValueChange: (Difficulty) -> Unit) {
     var expanded by remember { mutableStateOf(false) }
-    var selected by remember { mutableStateOf(difficulty) }
     Card(
         modifier = Modifier.padding(10.dp)
     ) {
@@ -129,14 +121,13 @@ fun DifficultySection(difficulty: Difficulty, onValueChange: (Difficulty) -> Uni
                 ClickableText(text = AnnotatedString(stringResource(R.string.which_difficulty)),
                     onClick = { expanded = true })
                 ClickableText(
-                    text = AnnotatedString(selected.toString()),
+                    text = AnnotatedString(difficulty.toString()),
                     onClick = { expanded = true })
             }
             DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
                 Difficulty.values().forEach {
                     DropdownMenuItem(text = { Text(it.name) }, onClick = {
                         onValueChange(it)
-                        selected = it
                         expanded = false
                     })
                 }
@@ -170,8 +161,7 @@ fun splitAndCapitalizeWords(origin: String): String {
 @Composable
 fun CategorySection(category: Category, onValueChange: (Category) -> Unit) {
     var expanded by remember { mutableStateOf(false) }
-    var selected by remember { mutableStateOf(category) }
-    val selectedText by lazy { splitAndCapitalizeWords(selected.name) }
+    val selectedText = splitAndCapitalizeWords(category.name)
     Card(
         modifier = Modifier.padding(10.dp)
     ) {
@@ -193,7 +183,6 @@ fun CategorySection(category: Category, onValueChange: (Category) -> Unit) {
                     val name = splitAndCapitalizeWords(it.name)
                     DropdownMenuItem(text = { Text(name) }, onClick = {
                         onValueChange(it)
-                        selected = it
                         expanded = false
                     })
                 }
@@ -203,7 +192,7 @@ fun CategorySection(category: Category, onValueChange: (Category) -> Unit) {
 }
 
 @Composable
-fun SettingActionSection(onBack: () -> Unit, onSave: () -> Unit) {
+fun SettingActionSection(canSave: Boolean, onBack: () -> Unit, onSave: () -> Unit) {
     Row(
         horizontalArrangement = Arrangement.SpaceAround, modifier = Modifier.fillMaxWidth()
     ) {
@@ -212,9 +201,10 @@ fun SettingActionSection(onBack: () -> Unit, onSave: () -> Unit) {
         }) {
             Text(stringResource(R.string.close))
         }
-        Button(onClick = {
-            onSave()
-        }) {
+        Button(
+            onClick = { onSave() },
+            enabled = canSave,
+        ) {
             Text(stringResource(R.string.save))
         }
     }

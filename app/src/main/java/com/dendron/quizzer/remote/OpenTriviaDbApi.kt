@@ -1,7 +1,7 @@
 package com.dendron.quizzer.remote
 
 import com.dendron.quizzer.common.Constants.QUESTION_COUNT
-import com.dendron.quizzer.data.model.Trivia
+import com.dendron.quizzer.remote.model.Trivia
 import retrofit2.http.GET
 import retrofit2.http.Query
 
