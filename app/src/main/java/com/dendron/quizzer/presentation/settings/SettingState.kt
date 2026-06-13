@@ -12,5 +12,7 @@ data class SettingState(
     val category: Category = settings.category,
 ) {
     val hasChanges: Boolean
-        get() = settings != Settings(questionCount, difficulty, category)
+        get() = questionCount != settings.questionCount ||
+            difficulty != settings.difficulty ||
+            category != settings.category
 }

@@ -63,6 +63,26 @@ class LocalSettingsRepositoryTest {
         assertEquals(expected, repository.getSettings().first())
     }
 
+    @Test
+    fun `recordGameResult should update bests last result and streak`() = runTest {
+        val repository = LocalSettingsRepository(createDataStore())
+
+        repository.recordGameResult(score = 800, questionCount = 10)
+        repository.recordGameResult(score = 500, questionCount = 10)
+
+        assertEquals(
+            Settings(
+                bestScore = 800,
+                bestPercentage = 80,
+                currentStreak = 0,
+                bestStreak = 1,
+                lastScore = 500,
+                lastQuestionCount = 10,
+            ),
+            repository.getSettings().first(),
+        )
+    }
+
     private fun createDataStore() = PreferenceDataStoreFactory.create(
         produceFile = { File.createTempFile("settings-test", ".preferences_pb") }
     )

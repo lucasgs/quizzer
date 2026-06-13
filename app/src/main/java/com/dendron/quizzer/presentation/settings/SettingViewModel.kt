@@ -42,7 +42,7 @@ class SettingViewModel @Inject constructor(
     fun onSaveSettings() {
         viewModelScope.launch {
             val currentState = state.value
-            val newSettings = Settings(
+            val newSettings = currentState.settings.copy(
                 questionCount = currentState.questionCount,
                 difficulty = currentState.difficulty,
                 category = currentState.category,

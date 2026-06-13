@@ -190,6 +190,8 @@ class QuestionViewModelTest {
         override fun getSettings(): Flow<Settings> = flowOf(Settings(10, Difficulty.Any, Category.Any))
 
         override suspend fun setSettings(newSettings: Settings) = Unit
+
+        override suspend fun recordGameResult(score: Int, questionCount: Int) = Unit
     }
 
     private class FakeTriviaRepository(

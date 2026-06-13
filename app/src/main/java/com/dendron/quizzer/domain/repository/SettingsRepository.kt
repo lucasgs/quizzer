@@ -6,4 +6,5 @@ import kotlinx.coroutines.flow.Flow
 interface SettingsRepository {
     fun getSettings(): Flow<Settings>
     suspend fun setSettings(newSettings: Settings)
+    suspend fun recordGameResult(score: Int, questionCount: Int)
 }

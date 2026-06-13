@@ -1,5 +1,15 @@
 <resources>
     <string name="app_name">Quizzer</string>
+    <string name="home_tagline_badge">Daily trivia challenge</string>
+    <string name="home_subtitle">Sharpen your recall, build streaks, and chase your best score.</string>
+    <string name="home_stats_title">Recent performance</string>
+    <string name="home_best_score">Best score</string>
+    <string name="home_best_accuracy">Best accuracy</string>
+    <string name="home_current_streak">Current streak</string>
+    <string name="home_best_streak">Best streak</string>
+    <string name="home_last_round">Last round</string>
+    <string name="new_best_score">New best score</string>
+    <string name="new_best_streak">New best streak</string>
     <string name="start">Start</string>
     <string name="score">Score</string>
     <string name="close">Close</string>

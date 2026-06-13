@@ -11,6 +11,7 @@ import com.dendron.quizzer.presentation.home.HomeScreen
 import com.dendron.quizzer.presentation.question.QuestionScreen
 import com.dendron.quizzer.presentation.question.QuestionViewModel
 import com.dendron.quizzer.presentation.score.ScoreScreen
+import com.dendron.quizzer.presentation.score.ScoreViewModel
 import com.dendron.quizzer.presentation.settings.SettingScreen
 
 @Composable
@@ -41,10 +42,14 @@ fun NavigationGraph(navController: NavHostController) {
         }
 
         composable(route = Screen.SCORE.route + "/{score}/{questionCount}") { navBackStackEntry ->
+            val viewModel: ScoreViewModel = hiltViewModel()
+            val scoreState = viewModel.state.collectAsStateWithLifecycle()
             ScoreScreen(
                 navController = navController,
                 score = navBackStackEntry.arguments?.getString("score").toString(),
-                questionCount = navBackStackEntry.arguments?.getString("questionCount").toString()
+                questionCount = navBackStackEntry.arguments?.getString("questionCount").toString(),
+                scoreState = scoreState.value,
+                onAppear = viewModel::recordResult,
             )
         }
 
