@@ -36,7 +36,7 @@ fun MainLayout(
         },
         modifier = Modifier.fillMaxSize()
     ) { innerPadding ->
-        Box() {
+        Box(modifier = Modifier.fillMaxSize()) {
             if (showBackground) {
                 Image(
                     colorFilter = ColorFilter.tint(
@@ -50,7 +50,9 @@ fun MainLayout(
                     modifier = Modifier.fillMaxHeight()
                 )
             }
-            content(innerPadding)
+            Box(modifier = Modifier.padding(innerPadding)) {
+                content(innerPadding)
+            }
         }
     }
 }

@@ -1,10 +1,14 @@
 package com.dendron.quizzer.presentation.question
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
@@ -77,33 +81,47 @@ fun QuestionScreen(
                     modifier = Modifier
                         .fillMaxSize()
                         .verticalScroll(scrollState)
-                        .padding(30.dp)
+                        .padding(horizontal = 20.dp, vertical = 24.dp)
                 ) {
-                    HeaderSection(
-                        text = state.question.parseAsHtml().toString(),
-                        questionCount = state.questionCount,
-                        questionNumber = state.questionNumber,
-                        category = state.category,
-                        difficulty = state.difficulty,
-                    )
-                    VerticalSpace()
-                    AnswersList(
-                        answers = state.answers,
-                        answerSelected = state.answer,
-                        showCorrect = (state.answerResult != AnswerResult.None)
-                    ) { selected ->
-                        onEvent(QuestionListEvent.SetAnswer(answer = selected))
-                    }
-                    if (answerFeedback != null) {
-                        VerticalSpace()
-                        InfoMessage(
-                            message = answerFeedback,
-                            color = if (state.answerResult is AnswerResult.Correct) {
-                                MaterialTheme.colorScheme.primary
-                            } else {
-                                MaterialTheme.colorScheme.error
-                            }
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .widthIn(max = 680.dp)
+                            .align(Alignment.CenterHorizontally)
+                    ) {
+                        HeaderSection(
+                            text = state.question.parseAsHtml().toString(),
+                            questionCount = state.questionCount,
+                            questionNumber = state.questionNumber,
+                            category = state.category,
+                            difficulty = state.difficulty,
                         )
+                        VerticalSpace()
+                        AnswersList(
+                            answers = state.answers,
+                            answerSelected = state.answer,
+                            showCorrect = (state.answerResult != AnswerResult.None)
+                        ) { selected ->
+                            onEvent(QuestionListEvent.SetAnswer(answer = selected))
+                        }
+                        AnimatedVisibility(
+                            visible = answerFeedback != null,
+                            enter = fadeIn() + slideInVertically(initialOffsetY = { it / 2 }),
+                        ) {
+                            if (answerFeedback != null) {
+                                Column {
+                                    VerticalSpace()
+                                    InfoMessage(
+                                        message = answerFeedback,
+                                        color = if (state.answerResult is AnswerResult.Correct) {
+                                            MaterialTheme.colorScheme.primary
+                                        } else {
+                                            MaterialTheme.colorScheme.error
+                                        }
+                                    )
+                                }
+                            }
+                        }
                     }
                 }
             }

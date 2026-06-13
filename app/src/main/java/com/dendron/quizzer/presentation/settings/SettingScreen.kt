@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -85,25 +86,31 @@ fun SettingContent(
             verticalArrangement = Arrangement.Top,
             modifier = Modifier
                 .fillMaxSize()
-                .padding(10.dp)
+                .padding(horizontal = 20.dp, vertical = 16.dp)
         ) {
-            QuestionCountSection(
-                questionCount = uiState.questionCount,
-                onValueChange = onQuestionCountChanged,
-            )
-            DifficultySection(
-                difficulty = uiState.difficulty,
-                onValueChange = onDifficultyChanged,
-            )
-            CategorySection(
-                category = uiState.category,
-                onValueChange = onCategoryChanged,
-            )
-            QuizSetupSummarySection(
-                questionCount = uiState.questionCount,
-                difficulty = uiState.difficulty,
-                category = uiState.category,
-            )
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .widthIn(max = 680.dp)
+            ) {
+                QuestionCountSection(
+                    questionCount = uiState.questionCount,
+                    onValueChange = onQuestionCountChanged,
+                )
+                DifficultySection(
+                    difficulty = uiState.difficulty,
+                    onValueChange = onDifficultyChanged,
+                )
+                CategorySection(
+                    category = uiState.category,
+                    onValueChange = onCategoryChanged,
+                )
+                QuizSetupSummarySection(
+                    questionCount = uiState.questionCount,
+                    difficulty = uiState.difficulty,
+                    category = uiState.category,
+                )
+            }
         }
     }
 }

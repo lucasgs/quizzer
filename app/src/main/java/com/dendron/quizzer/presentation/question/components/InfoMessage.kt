@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -19,13 +20,18 @@ fun InfoMessage(message: String, modifier: Modifier = Modifier, color: Color = C
             .fillMaxWidth()
             .padding(8.dp)
     ) {
-        Text(
-            text = message,
-            color = color,
-            style = MaterialTheme.typography.bodyLarge,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier
-                .align(Alignment.Center)
-        )
+        Surface(
+            color = color.copy(alpha = 0.12f),
+            shape = MaterialTheme.shapes.large,
+            modifier = Modifier.align(Alignment.Center)
+        ) {
+            Text(
+                text = message,
+                color = color,
+                style = MaterialTheme.typography.bodyLarge,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)
+            )
+        }
     }
 }
