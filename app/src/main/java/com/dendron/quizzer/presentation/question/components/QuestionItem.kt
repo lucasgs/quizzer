@@ -55,9 +55,7 @@ fun AnswerItem(
                         textAlign = TextAlign.Center,
                         softWrap = true,
                         modifier = Modifier
-                            .align(Alignment.Center)
-                            .semantics { testTagsAsResourceId = true }
-                            .testTag("Option"),
+                            .align(Alignment.Center),
                     )
                     if (showCorrect && (isCorrect || isSelected)) {
                         Icon(
@@ -79,6 +77,8 @@ fun AnswerItem(
 
             modifier = Modifier
                 .fillMaxWidth()
+                .semantics { testTagsAsResourceId = true }
+                .testTag("Option")
         )
     }
 }

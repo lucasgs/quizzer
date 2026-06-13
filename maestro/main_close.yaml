@@ -1,7 +1,8 @@
 appId: com.dendron.quizzer
 ---
-- launchApp
+- launchApp:
+    clearState: true
 - tapOn: "Start"
 - runFlow: play.yaml
-- tapOn: "Close"
+- tapOn: "Home"
 - assertVisible: "Quizzer"

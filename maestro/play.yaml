@@ -1,12 +1,16 @@
 appId: com.dendron.quizzer
 ---
 - repeat:
-    times: 10 
+    times: 9
     commands:
       - tapOn:
           id: "Option"
-          # index: 0
-      - tapOn: "Next"
-- assertVisible: 'Score'
-- assertVisible: 'Close'
-- assertVisible: 'Play again'
+      - tapOn: "Check answer"
+      - tapOn: "Next question"
+- tapOn:
+    id: "Option"
+- tapOn: "Check answer"
+- tapOn: "Finish"
+- assertVisible: "Score"
+- assertVisible: "Home"
+- assertVisible: "Play again"

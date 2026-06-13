@@ -1,7 +1,8 @@
 appId: com.dendron.quizzer
 ---
-- assertVisible: 'How many questions?'
-- assertVisible: 'Which difficulty?'
-- assertVisible: 'Which category?'
-- assertVisible: 'Save'
-- assertVisible: 'Close'
+- assertVisible: "How many questions?"
+- assertVisible: "Which difficulty?"
+- assertVisible: "Which category?"
+- assertVisible: "Quiz setup summary"
+- assertVisible: "Save"
+- assertVisible: "Close"
